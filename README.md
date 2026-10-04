@@ -25,5 +25,5 @@ Actions 탭에서 `Deploy` 워크플로를 수동 실행(`workflow_dispatch`)할
 
 ## 서버 설정
 
-스왑, 러너/PM2 상시 실행, 방화벽, Caddy HTTPS, 문제 해결, 롤백 등 전체 과정은
+서버 설정 요약은
 [docs/SERVER_SETUP.md](docs/SERVER_SETUP.md)를 참고하세요.
