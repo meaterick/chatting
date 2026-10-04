@@ -18,7 +18,7 @@ cp -a .next/standalone/. "$STAGE/"
 mkdir -p "$STAGE/.next"
 cp -a .next/static "$STAGE/.next/static"
 cp -a public "$STAGE/public"
-cp ecosystem.config.js scripts/deploy.sh "$STAGE/"
+cp ecosystem.config.js scripts/deploy.sh deploy/Caddyfile "$STAGE/"
 
 tar -czf "$OUT" -C "$STAGE" .
 echo "패키징 완료: $OUT ($(du -h "$OUT" | cut -f1))"

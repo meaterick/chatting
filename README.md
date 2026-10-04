@@ -49,17 +49,37 @@ sudo ./svc.sh install && sudo ./svc.sh start
 
 > 러너 서비스와 PM2는 같은 사용자로 실행되어야 같은 PM2 데몬을 사용합니다.
 
-**방화벽 3000 포트 열기**
+**HTTPS (Caddy)** — `https://meaterickchat.kro.kr` → Caddy(80/443) → Next.js(`127.0.0.1:3000`)
 
-- OCI 콘솔: VCN → Security List → Ingress Rule에 TCP 3000 추가
-- 서버 내부 (Ubuntu 이미지 기준):
+1. DNS(내도메인.한국)에서 `meaterickchat.kro.kr`의 A 레코드를 서버 공인 IP로 설정
+2. 80, 443 포트 열기 (OCI Security List + 서버 iptables)
 
 ```bash
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 3000 -j ACCEPT
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
 sudo netfilter-persistent save
 ```
 
-이후 `http://<서버 공인 IP>:3000` 으로 접속합니다.
+3. Caddy 설치 (Ubuntu)
+
+```bash
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https curl
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update && sudo apt install -y caddy
+```
+
+4. 저장소의 `deploy/Caddyfile` 적용
+
+```bash
+sudo cp ~/apps/chatting/current/Caddyfile /etc/caddy/Caddyfile   # 첫 배포 이후 존재
+sudo systemctl reload caddy
+```
+
+Caddy가 인증서를 자동 발급·갱신하고 HTTP는 HTTPS로 리다이렉트합니다.
+이후 `deploy/Caddyfile`을 수정하면 배포 시 자동 반영됩니다 (러너 사용자에게 비밀번호 없는 sudo가 있을 때만, 없으면 경고만 출력).
+
+앱은 `127.0.0.1:3000`에만 바인딩되므로 3000 포트는 외부에 열 필요가 없습니다.
 
 ## 롤백
 

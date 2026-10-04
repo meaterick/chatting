@@ -13,7 +13,8 @@ module.exports = {
       env: {
         NODE_ENV: "production",
         PORT: process.env.PORT || 3000,
-        HOSTNAME: "0.0.0.0",
+        // Caddy를 통해서만 접근하도록 로컬에만 바인딩
+        HOSTNAME: "127.0.0.1",
         GIT_COMMIT: process.env.GIT_COMMIT || "unknown",
         DEPLOYED_AT: process.env.DEPLOYED_AT || "",
       },

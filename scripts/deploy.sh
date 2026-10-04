@@ -38,14 +38,34 @@ pm2 start ecosystem.config.js
 pm2 save
 
 # 헬스 체크
+healthy=false
 for i in $(seq 1 30); do
   if curl -fsS "http://127.0.0.1:$PORT/api/health" >/dev/null 2>&1; then
-    echo "배포 성공: $GIT_COMMIT (port $PORT)"
-    exit 0
+    healthy=true
+    break
   fi
   sleep 1
 done
 
-echo "헬스 체크 실패" >&2
-pm2 logs "$APP_NAME" --lines 50 --nostream || true
-exit 1
+if [ "$healthy" != true ]; then
+  echo "헬스 체크 실패" >&2
+  pm2 logs "$APP_NAME" --lines 50 --nostream || true
+  exit 1
+fi
+echo "배포 성공: $GIT_COMMIT (port $PORT)"
+
+# Caddyfile 이 바뀌었으면 반영 (러너 사용자에게 비밀번호 없는 sudo 가 있을 때만)
+CADDYFILE_SRC="$APP_DIR/current/Caddyfile"
+CADDYFILE_DST="/etc/caddy/Caddyfile"
+if [ -f "$CADDYFILE_SRC" ] && command -v caddy >/dev/null 2>&1; then
+  if cmp -s "$CADDYFILE_SRC" "$CADDYFILE_DST"; then
+    echo "Caddyfile 변경 없음"
+  elif sudo -n true 2>/dev/null; then
+    caddy validate --config "$CADDYFILE_SRC" --adapter caddyfile
+    sudo cp "$CADDYFILE_SRC" "$CADDYFILE_DST"
+    sudo systemctl reload caddy
+    echo "Caddyfile 적용 완료"
+  else
+    echo "::warning::Caddyfile 이 변경됐지만 sudo 권한이 없어 적용하지 못했습니다. 서버에서 직접 복사 후 'sudo systemctl reload caddy' 하세요."
+  fi
+fi
