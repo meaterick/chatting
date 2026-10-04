@@ -11,25 +11,54 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    runs-on: self-hosted
-    timeout-minutes: 30
+  # 서버 RAM(1GB)이 부족하므로 빌드는 GitHub 호스티드 러너에서 수행
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
     env:
       NEXT_TELEMETRY_DISABLED: "1"
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
       - name: Build
-        # 1GB RAM 서버에서 빌드가 OOM 나지 않도록 힙 제한
         run: npm run build
-        env:
-          NODE_OPTIONS: --max-old-space-size=768
+
+      - name: Package bundle
+        run: bash scripts/package.sh bundle.tar.gz
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: bundle
+          path: bundle.tar.gz
+          retention-days: 7
+
+  # 서버(self-hosted runner)에서는 빌드 결과물을 받아 PM2로 실행만 함
+  deploy:
+    needs: build
+    runs-on: self-hosted
+    timeout-minutes: 10
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: bundle
+
+      - name: Extract bundle
+        run: |
+          rm -rf bundle
+          mkdir bundle
+          tar -xzf bundle.tar.gz -C bundle
+          rm bundle.tar.gz
 
       - name: Deploy with PM2
-        run: bash scripts/deploy.sh
+        run: bash bundle/deploy.sh bundle
         env:
           GIT_COMMIT: ${{ github.sha }}
           # 러너는 잡 종료 시 자신이 띄운 프로세스를 정리한다.

@@ -11,18 +11,21 @@ npm run dev   # http://localhost:3000
 
 ## 자동 배포 흐름
 
-`main`에 push(PR 병합 포함)되면 `.github/workflows/deploy.yml`이 self-hosted runner에서 실행됩니다.
+`main`에 push(PR 병합 포함)되면 `.github/workflows/deploy.yml`이 실행됩니다.
+서버 RAM이 1GB라서 **빌드는 GitHub 호스티드 러너에서** 하고, 서버는 결과물을 받아 실행만 합니다.
 
-1. `npm ci` → `npm run build` (`output: "standalone"`으로 최소 런타임만 생성)
-2. `scripts/deploy.sh`가 결과물을 `~/apps/chatting/current`로 복사 (직전 버전은 `~/apps/chatting/previous`)
+1. **build** (`ubuntu-latest`): `npm ci` → `npm run build` → `scripts/package.sh`로 standalone 결과물을 `bundle.tar.gz`로 묶어 artifact 업로드
+2. **deploy** (`self-hosted`): artifact 다운로드·압축 해제 → `deploy.sh`가 `~/apps/chatting/current`로 교체 (직전 버전은 `~/apps/chatting/previous`)
 3. PM2로 `chatting` 프로세스 재시작 후 `pm2 save`
 4. `http://127.0.0.1:3000/api/health` 헬스 체크, 실패 시 워크플로 실패 처리
 
 Actions 탭에서 `Deploy` 워크플로를 수동 실행(`workflow_dispatch`)할 수도 있습니다.
 
+> 빌드는 x86_64 Linux에서 되므로 서버도 x86_64(E2.1.Micro 등)여야 합니다. ARM(Ampere A1)이면 `build` 잡을 `ubuntu-24.04-arm`으로 바꾸세요.
+
 ## 서버 1회 설정 (OCI, 1 vCPU / 1GB RAM)
 
-**스왑 추가 (강력 권장)** — 1GB RAM에서는 `next build` 중 OOM이 날 수 있습니다.
+**스왑 추가 (권장)** — 빌드는 서버에서 하지 않지만, 1GB RAM에서 러너·PM2·Node가 함께 돌 때 여유를 위해 추가합니다.
 
 ```bash
 sudo fallocate -l 2G /swapfile

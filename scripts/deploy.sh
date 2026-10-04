@@ -1,32 +1,26 @@
 #!/usr/bin/env bash
-# 빌드된 Next.js standalone 결과물을 배포 디렉터리로 옮기고 PM2로 (재)시작한다.
-# `npm run build` 이후 저장소 루트에서 실행한다.
+# scripts/package.sh 로 만든 번들을 배포 디렉터리로 옮기고 PM2로 (재)시작한다.
+# 사용법: bash deploy.sh <압축 해제된 번들 디렉터리>
 set -euo pipefail
 
+BUNDLE="${1:?번들 디렉터리를 지정하세요}"
 APP_NAME="chatting"
 APP_DIR="${APP_DIR:-$HOME/apps/$APP_NAME}"
 PORT="${PORT:-3000}"
 export PORT
-GIT_COMMIT="${GIT_COMMIT:-$(git rev-parse --short HEAD 2>/dev/null || echo unknown)}"
+GIT_COMMIT="${GIT_COMMIT:-unknown}"
 export GIT_COMMIT="${GIT_COMMIT:0:7}"
 export DEPLOYED_AT="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
-if [ ! -f .next/standalone/server.js ]; then
-  echo "standalone 빌드 결과물이 없습니다. 먼저 npm run build 를 실행하세요." >&2
+if [ ! -f "$BUNDLE/server.js" ]; then
+  echo "$BUNDLE/server.js 가 없습니다. 올바른 번들인지 확인하세요." >&2
   exit 1
 fi
 
 mkdir -p "$APP_DIR"
 STAGING="$APP_DIR/.staging"
 rm -rf "$STAGING"
-mkdir -p "$STAGING"
-
-# standalone 서버 + 정적 파일 + public + pm2 설정을 한 디렉터리에 모은다
-cp -a .next/standalone/. "$STAGING/"
-mkdir -p "$STAGING/.next"
-cp -a .next/static "$STAGING/.next/static"
-cp -a public "$STAGING/public"
-cp ecosystem.config.js "$STAGING/"
+cp -a "$BUNDLE" "$STAGING"
 
 # 디렉터리 교체 (이전 버전은 previous 로 하나만 보관)
 rm -rf "$APP_DIR/previous"
