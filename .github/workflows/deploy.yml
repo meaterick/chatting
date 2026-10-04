@@ -1,0 +1,37 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# 배포는 한 번에 하나씩만
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    timeout-minutes: 30
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build
+        # 1GB RAM 서버에서 빌드가 OOM 나지 않도록 힙 제한
+        run: npm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=768
+
+      - name: Deploy with PM2
+        run: bash scripts/deploy.sh
+        env:
+          GIT_COMMIT: ${{ github.sha }}
+          # 러너는 잡 종료 시 자신이 띄운 프로세스를 정리한다.
+          # 이 값을 비워야 PM2 데몬이 잡 종료 후에도 살아남는다.
+          RUNNER_TRACKING_ID: ""
