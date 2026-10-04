@@ -63,9 +63,26 @@ if [ -f "$CADDYFILE_SRC" ] && command -v caddy >/dev/null 2>&1; then
   elif sudo -n true 2>/dev/null; then
     caddy validate --config "$CADDYFILE_SRC" --adapter caddyfile
     sudo cp "$CADDYFILE_SRC" "$CADDYFILE_DST"
-    sudo systemctl reload caddy
+    sudo systemctl reload-or-restart caddy
     echo "Caddyfile 적용 완료"
   else
     echo "::warning::Caddyfile 이 변경됐지만 sudo 권한이 없어 적용하지 못했습니다. 서버에서 직접 복사 후 'sudo systemctl reload caddy' 하세요."
   fi
+fi
+
+# 인증서 발급 재시도 서비스 설치/갱신 (Let's Encrypt 한도 해제 시각에 맞춰 Caddy 재시작, 발급되면 자동 종료)
+CERT_RETRY_SH="$APP_DIR/current/caddy-cert-retry.sh"
+CERT_RETRY_UNIT="$APP_DIR/current/caddy-cert-retry.service"
+if [ -f "$CERT_RETRY_SH" ] && command -v caddy >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+  if ! cmp -s "$CERT_RETRY_SH" /usr/local/bin/caddy-cert-retry.sh \
+     || ! cmp -s "$CERT_RETRY_UNIT" /etc/systemd/system/caddy-cert-retry.service; then
+    sudo install -m 755 "$CERT_RETRY_SH" /usr/local/bin/caddy-cert-retry.sh
+    sudo install -m 644 "$CERT_RETRY_UNIT" /etc/systemd/system/caddy-cert-retry.service
+    sudo systemctl daemon-reload
+    sudo systemctl enable caddy-cert-retry >/dev/null 2>&1
+    sudo systemctl restart caddy-cert-retry
+    echo "인증서 재시도 서비스 설치/갱신 완료"
+  fi
+  systemctl is-active --quiet caddy-cert-retry && echo "인증서 재시도 서비스: 실행 중 (발급 대기)" \
+    || echo "인증서 재시도 서비스: 종료됨 (인증서 발급 완료 상태)"
 fi
