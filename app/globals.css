@@ -415,7 +415,12 @@ main {
 }
 
 main a,
-main button {
+main button,
+.panel-inner,
+.pricing-head,
+.contact-inner,
+.card {
+  /* 링크/버튼/텍스트 블록/카드는 포인터를 받는다 (선택·호버 가능). 나머지는 3D 캔버스로 통과 */
   pointer-events: auto;
 }
 
