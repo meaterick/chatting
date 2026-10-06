@@ -4,7 +4,7 @@ After=caddy.service
 
 [Service]
 Type=simple
-ExecStart=/usr/local/bin/caddy-cert-retry.sh meaterickchat.kro.kr
+ExecStart=/usr/local/bin/caddy-cert-retry.sh dostervibes.kro.kr
 # 인증서 발급 후 정상 종료(0)하면 다시 시작하지 않음
 Restart=on-failure
 RestartSec=60
