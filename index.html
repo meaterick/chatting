@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<!--
+  DOSTER — index.html : 사이트의 "내용"(글, 사진 위치)
+  ▶ 사진 바꾸기: images 폴더에 "같은 이름"의 사진을 넣으면 끝. 이 파일은 고칠 필요 없음.
+  ▶ 찾기: ⌘+F 로 "photo01" 같은 파일 이름을 검색하면 📷 주석이 붙은 위치가 나옵니다.
+  ▶ 캡션: <figcaption> 안의 글자만 바꾸세요. alt="..." 는 화면 낭독기가 읽는 사진 설명입니다.
+-->
+<html lang="en" class="no-js">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="stylesheet" href="style.css">
+  <title>DOSTER — Photographs, Films &amp; Code</title>
+  <meta name="description" content="DOSTER — an online exhibition and personal archive. Photographer / Filmmaker / Developer.">
+  <meta name="theme-color" content="#0c0c0c">
+  <link rel="preload" as="image" href="images/hero.jpg">
+  <script>
+    document.documentElement.className = 'js';
+    /* 사진 파일이 없을 때 안내 상자를 보여주기 위해 오류를 미리 모아 둠 (script.js가 처리) */
+    window.__dosterMissing = [];
+    document.addEventListener('error', function (e) {
+      var t = e.target;
+      if (t && t.tagName === 'IMG') {
+        if (window.dosterShowMissing) window.dosterShowMissing(t);
+        else window.__dosterMissing.push(t);
+      }
+    }, true);
+    /* script.js를 못 찾으면 3초 뒤 애니메이션 없이 모든 내용을 보여줌 */
+    setTimeout(function () {
+      if (!window.dosterReady) document.documentElement.classList.remove('js');
+    }, 3000);
+  </script>
+</head>
+
+<body data-theme="dark">
+  <a class="skip-link" href="#intro">Skip to content</a>
+
+  <!-- ───── 상단 메뉴 ───── -->
+  <header class="site-header is-top" id="site-header">
+    <a href="#top" class="brand" aria-label="DOSTER — back to the entrance">DOSTER</a>
+    <nav class="nav" aria-label="Main">
+      <ul class="nav-list">
+        <li><a href="#exhibition">Exhibition</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="menu">
+      <span class="menu-toggle-open">Menu</span><span class="menu-toggle-close">Close</span>
+    </button>
+  </header>
+
+  <!-- 모바일 전체 화면 메뉴 -->
+  <div class="menu" id="menu" hidden>
+    <nav aria-label="Mobile">
+      <ol class="menu-list">
+        <li><a href="#exhibition"><span>01</span>Exhibition</a></li>
+        <li><a href="#projects"><span>02</span>Projects</a></li>
+        <li><a href="#about"><span>03</span>About</a></li>
+        <li><a href="#contact"><span>04</span>Contact</a></li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- 왼쪽 아래 전시실 이름 표시 -->
+  <p class="wayfinder" id="wayfinder" aria-hidden="true"></p>
+
+  <main id="main">
+
+    <!-- ═════ ENTRANCE (첫 화면) ═════ -->
+    <section class="hero" id="top" data-theme="dark" aria-label="Entrance">
+      <div class="hero-media">
+        <!-- 📷 hero.jpg | 첫 화면 전체 사진 | 권장: 가로 3:2, 긴 변 2400px. 가장자리가 잘릴 수 있으니 주인공은 가운데로 -->
+        <img class="hero-img" src="images/hero.jpg" alt="Opening photograph of the DOSTER exhibition"
+             width="2400" height="1600" fetchpriority="high" decoding="async">
+      </div>
+      <div class="hero-content" id="hero-content">
+        <p class="hero-kicker">An online exhibition — Photographs, films &amp; code</p>
+        <h1 class="hero-title">DOSTER</h1>
+        <p class="hero-roles">Photographer <span aria-hidden="true">/</span> Filmmaker <span aria-hidden="true">/</span> Developer</p>
+      </div>
+      <a class="scroll-cue" href="#intro" aria-label="Scroll to enter the exhibition">
+        <span class="scroll-cue-line" aria-hidden="true"></span>
+        <span class="scroll-cue-text">Scroll</span>
+      </a>
+    </section>
+
+    <!-- ═════ INTRO ═════ -->
+    <section class="intro" id="intro" data-theme="light" aria-label="Foreword">
+      <div class="wrap">
+        <p class="eyebrow reveal">Foreword</p>
+        <h2 class="statement">
+          <span class="line reveal">Light passes.</span>
+          <span class="line reveal" style="--d:.12s">People leave.</span>
+          <span class="line reveal" style="--d:.24s">I press the shutter</span>
+          <span class="line reveal" style="--d:.36s"><em>so that something stays.</em></span>
+        </h2>
+        <p class="intro-ko reveal" lang="ko" style="--d:.5s">
+          빛은 지나가고, 사람은 떠난다.<br>그래서 나는 셔터를 누른다 — 무언가 남도록.
+        </p>
+      </div>
+    </section>
+
+    <!-- ═════ EXHIBITION 목차 ═════ -->
+    <section class="exhibition-intro" id="exhibition" data-theme="light" aria-labelledby="exhibition-title">
+      <div class="wrap">
+        <p class="eyebrow reveal">Exhibition</p>
+        <h2 class="display reveal" id="exhibition-title">Five rooms.<br><em>One way of seeing.</em></h2>
+        <ol class="room-index">
+          <li class="reveal"><a href="#room-people"><span class="num">01</span><span class="name">People</span><span class="desc">Strangers &amp; friends</span></a></li>
+          <li class="reveal" style="--d:.06s"><a href="#room-daily"><span class="num">02</span><span class="name">Daily</span><span class="desc">Ordinary light</span></a></li>
+          <li class="reveal" style="--d:.12s"><a href="#room-film"><span class="num">03</span><span class="name">Film</span><span class="desc">36 frames, no preview</span></a></li>
+          <li class="reveal" style="--d:.18s"><a href="#room-portrait"><span class="num">04</span><span class="name">Portrait</span><span class="desc">You let me look</span></a></li>
+          <li class="reveal" style="--d:.24s"><a href="#room-experimental"><span class="num">05</span><span class="name">Experimental</span><span class="desc">Mistakes I kept</span></a></li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- ═════ ROOM 01 — PEOPLE : 화면 가득 + 두 장 구성 ═════ -->
+    <section class="room" id="room-people" data-theme="light" data-room="01 — People" aria-labelledby="room-people-title">
+      <header class="room-head wrap">
+        <p class="room-num reveal">01 —</p>
+        <h2 class="room-title reveal" id="room-people-title">PEOPLE</h2>
+        <p class="room-text reveal" style="--d:.15s">Strangers who looked back. Friends who didn't notice. Every face carries a weather of its own.</p>
+      </header>
+
+      <!-- 📷 photo01.jpg | PEOPLE 대표 사진 · 화면 가득 | 권장: 가로 3:2 -->
+      <figure class="work layout-full">
+        <div class="frame zoom-on-scroll">
+          <img src="images/photo01.jpg" alt="People — a stranger crossing the street, looking back at the camera"
+               width="2400" height="1600" loading="lazy" decoding="async">
+        </div>
+        <figcaption class="label wrap">
+          <span class="label-title">Untitled (Crosswalk)</span><span>Canon QL17G3</span><span>Extar 100</span><span>Singapor, 2026</span>
+        </figcaption>
+      </figure>
+
+      <div class="layout-pair wrap">
+        <!-- 📷 photo02.jpg | PEOPLE 두 장 구성 (왼쪽) | 권장: 세로 4:5 -->
+        <figure class="work pair-a">
+          <div class="frame reveal-img">
+            <img src="images/photo02.jpg" alt="People — a friend laughing, half turned away"
+                 width="1600" height="2000" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="label"><span class="label-title">Friend, Laughing</span><span>Nikon F4</span><span>Portra 400</span><span>Seoul, 2026</span></figcaption>
+        </figure>
+        <!-- 📷 photo03.jpg | PEOPLE 두 장 구성 (오른쪽, 아래로 엇갈림) | 권장: 세로 4:5 -->
+        <figure class="work pair-b">
+          <div class="frame reveal-img">
+            <img src="images/photo03.jpg" alt="People — a person waiting alone at a bus stop"
+                 width="1600" height="2000" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="label"><span class="label-title">Waiting</span><span>Nikon F4</span><span>HP5 Plus</span><span>Busan, 2025</span></figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <!-- ═════ ROOM 02 — DAILY : 크게 가운데 + 가로 시퀀스 ═════ -->
+    <section class="room" id="room-daily" data-theme="light" data-room="02 — Daily" aria-labelledby="room-daily-title">
+      <header class="room-head wrap">
+        <p class="room-num reveal">02 —</p>
+        <h2 class="room-title reveal" id="room-daily-title">DAILY</h2>
+        <p class="room-text reveal" style="--d:.15s">Nothing happens here — a kitchen, a bus window, 7 a.m. That is exactly why I keep them.</p>
+      </header>
+
+      <!-- 📷 photo04.jpg | DAILY 대표 사진 · 크게 가운데 | 권장: 가로 3:2 (세로 사진도 잘리지 않음) -->
+      <figure class="work layout-center wrap">
+        <div class="frame reveal-img">
+          <img src="images/photo04.jpg" alt="Daily — morning light falling across a small kitchen table"
+               width="2400" height="1600" loading="lazy" decoding="async">
+        </div>
+        <figcaption class="label"><span class="label-title">Morning, Kitchen</span><span>Ricoh GR III</span><span>Digital</span><span>Seoul, 2026</span></figcaption>
+      </figure>
+
+      <!-- 가로 시퀀스: 컴퓨터에서는 아래로 스크롤하면 옆으로 흐르고, 휴대폰에서는 손가락으로 넘김 -->
+      <div class="hscroll" data-hscroll>
+        <div class="hscroll-sticky">
+          <div class="hscroll-track" tabindex="0" role="group" aria-label="Daily — a horizontal sequence of four photographs">
+            <div class="hs-intro">
+              <p class="eyebrow">Sequence</p>
+              <p class="hs-title">A week of<br><em>ordinary light.</em></p>
+            </div>
+            <!-- 📷 photo05.jpg | DAILY 가로 시퀀스 1 | 권장: 가로 3:2 -->
+            <figure class="work hs-item">
+              <div class="frame reveal-img"><img src="images/photo05.jpg" alt="Daily — Monday, a crowded subway platform" width="1800" height="1200" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Mon. 07:42</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+            </figure>
+            <!-- 📷 photo06.jpg | DAILY 가로 시퀀스 2 | 권장: 세로 3:4 -->
+            <figure class="work hs-item">
+              <div class="frame reveal-img"><img src="images/photo06.jpg" alt="Daily — Tuesday, a window seat on a city bus" width="1200" height="1600" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Tue. 12:10</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+            </figure>
+            <!-- 📷 photo07.jpg | DAILY 가로 시퀀스 3 | 권장: 가로 3:2 -->
+            <figure class="work hs-item">
+              <div class="frame reveal-img"><img src="images/photo07.jpg" alt="Daily — Wednesday, late sun on an empty hallway" width="1800" height="1200" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Wed. 17:55</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+            </figure>
+            <!-- 📷 photo08.jpg | DAILY 가로 시퀀스 4 | 권장: 정사각형 1:1 -->
+            <figure class="work hs-item">
+              <div class="frame reveal-img"><img src="images/photo08.jpg" alt="Daily — Thursday night, a convenience store glowing on a dark street" width="1600" height="1600" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Thu. 23:31</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════ ROOM 03 — FILM (어두운 전시실) : 비대칭 + 문장 + 화면 가득 ═════ -->
+    <section class="room" id="room-film" data-theme="dark" data-room="03 — Film" aria-labelledby="room-film-title">
+      <header class="room-head wrap">
+        <p class="room-num reveal">03 —</p>
+        <h2 class="room-title reveal" id="room-film-title">FILM</h2>
+        <p class="room-text reveal" style="--d:.15s">Thirty-six frames. No preview. Film taught me to wait for a moment instead of chasing it.</p>
+      </header>
+
+      <div class="layout-asym wrap">
+        <!-- 📷 photo09.jpg | FILM 대표 사진 · 왼쪽에 크게 | 권장: 가로 3:2 -->
+        <figure class="work asym-main">
+          <div class="frame reveal-img"><img src="images/photo09.jpg" alt="Film — the inside of a night bus glowing under tungsten light" width="2400" height="1600" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">Night Bus</span><span>Nikon F4</span><span>CineStill 800T</span><span>Seoul, 2025</span></figcaption>
+        </figure>
+        <!-- 📷 photo10.jpg | FILM 작은 세로 사진 · 오른쪽 아래 | 권장: 세로 2:3 -->
+        <figure class="work asym-side">
+          <div class="frame reveal-img"><img src="images/photo10.jpg" alt="Film — rain on a window, city lights blurred behind it" width="1200" height="1800" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">Rain</span><span>Nikon F4</span><span>CineStill 800T</span><span>Seoul, 2025</span></figcaption>
+        </figure>
+      </div>
+
+      <blockquote class="interlude wrap">
+        <p class="reveal">Developing film is<br><em>the slowest way to remember.</em></p>
+      </blockquote>
+
+      <!-- 📷 photo11.jpg | FILM 화면 가득 (스크롤하면 천천히 확대) | 권장: 와이드 16:9 -->
+      <figure class="work layout-full">
+        <div class="frame zoom-on-scroll"><img src="images/photo11.jpg" alt="Film — the Han River at dusk, the city reflected in the water" width="2400" height="1350" loading="lazy" decoding="async"></div>
+        <figcaption class="label wrap"><span class="label-title">Han River, 5:58 PM</span><span>Nikon F4</span><span>Portra 800</span><span>Seoul, 2026</span></figcaption>
+      </figure>
+    </section>
+
+    <!-- ═════ ROOM 04 — PORTRAIT : 세로 시퀀스 (왼쪽 제목이 따라 내려옴) ═════ -->
+    <section class="room room--portrait" id="room-portrait" data-theme="light" data-room="04 — Portrait" aria-labelledby="room-portrait-title">
+      <div class="vseq wrap">
+        <header class="vseq-aside">
+          <p class="room-num reveal">04 —</p>
+          <h2 class="room-title room-title--side reveal" id="room-portrait-title">PORTRAIT</h2>
+          <p class="room-text reveal" style="--d:.15s">A portrait is an agreement: you let me look, and I try to see.</p>
+        </header>
+        <div class="vseq-list">
+          <!-- 📷 photo12.jpg | PORTRAIT 대표 사진 (가장 큼) | 권장: 세로 2:3 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/photo12.jpg" alt="Portrait — J., looking straight into the lens" width="1600" height="2400" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">J.</span><span>Nikon F4</span><span>Portra 400</span><span>Seoul, 2026</span></figcaption>
+          </figure>
+          <!-- 📷 photo13.jpg | PORTRAIT 2번째 | 권장: 세로 4:5 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/photo13.jpg" alt="Portrait — M. after school, leaning against a wall" width="1600" height="2000" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">M., After School</span><span>Nikon F4</span><span>Portra 160</span><span>Seoul, 2026</span></figcaption>
+          </figure>
+          <!-- 📷 photo14.jpg | PORTRAIT 3번째 | 권장: 세로 2:3 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/photo14.jpg" alt="Portrait — a self-portrait reflected in a shop window" width="1600" height="2400" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">Self-portrait, Reflection</span><span>Nikon F4</span><span>HP5 Plus</span><span>2026</span></figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═════ ROOM 05 — EXPERIMENTAL (어두운 전시실) : 화면을 채우는 사진 + 가운데 ═════ -->
+    <section class="room" id="room-experimental" data-theme="dark" data-room="05 — Experimental" aria-labelledby="room-experimental-title">
+      <header class="room-head wrap">
+        <p class="room-num reveal">05 —</p>
+        <h2 class="room-title reveal" id="room-experimental-title">EXPERIMENTAL</h2>
+        <p class="room-text reveal" style="--d:.15s">Double exposures, long shutters, light leaks — and the mistakes I decided to keep.</p>
+      </header>
+
+      <!-- 📷 photo15.jpg | EXPERIMENTAL 대표 사진 · 작은 액자에서 화면 전체로 커짐 | 권장: 가로 3:2 -->
+      <figure class="work">
+        <div class="expand" data-expand>
+          <div class="expand-sticky">
+            <div class="expand-frame">
+              <img src="images/photo15.jpg" alt="Experimental — a double exposure of a face and city lights" width="2400" height="1600" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+        <figcaption class="label wrap"><span class="label-title">Double Exposure No. 3</span><span>Nikon F4</span><span>Ektar 100</span><span>Seoul, 2026</span></figcaption>
+      </figure>
+
+      <!-- 📷 photo16.jpg | EXPERIMENTAL 마지막 사진 · 가운데 | 권장: 정사각형 1:1 -->
+      <figure class="work layout-center layout-center--small wrap">
+        <div class="frame reveal-img"><img src="images/photo16.jpg" alt="Experimental — a long exposure turning passing cars into lines of light" width="2000" height="2000" loading="lazy" decoding="async"></div>
+        <figcaption class="label"><span class="label-title">Long Exposure, Untitled</span><span>Sony α7 IV</span><span>30 sec.</span><span>2026</span></figcaption>
+      </figure>
+
+      <div class="exhibition-end wrap">
+        <p class="eyebrow reveal">End of exhibition</p>
+        <p class="end-line reveal" style="--d:.12s"><em>Thank you for looking.</em></p>
+      </div>
+    </section>
+
+    <!-- ═════ PROJECTS ═════ (새 프로젝트 추가: 맨 아래 템플릿 참고) -->
+    <section class="projects" id="projects" data-theme="light" aria-labelledby="projects-title">
+      <header class="section-head wrap">
+        <p class="eyebrow reveal">Projects</p>
+        <h2 class="display reveal" id="projects-title">Beyond<br><em>the single frame.</em></h2>
+        <p class="section-lede reveal" style="--d:.12s">Series, films and videos — work that needs more than one picture to be told.</p>
+      </header>
+
+      <!-- ── PROJECT 01 : THE MOSA (사진 프로젝트) ── -->
+      <article class="project wrap" aria-labelledby="p01-title">
+        <div class="project-meta">
+          <p class="project-num reveal">P — 01</p>
+          <h3 class="project-title reveal" id="p01-title">THE MOSA</h3>
+          <dl class="project-facts reveal">
+            <div><dt>Type</dt><dd>Photo series</dd></div>
+            <div><dt>Year</dt><dd>2026</dd></div>
+            <div><dt>Role</dt><dd>Photography</dd></div>
+          </dl>
+          <!-- ✏️ 실제 설명으로 바꾸세요 -->
+          <p class="project-desc reveal">A photographic record of one community — the people, the rooms we shared, and the small rituals that made us who we were.</p>
+        </div>
+        <div class="project-media">
+          <!-- 📷 project-mosa.jpg | 대표 이미지 | 권장: 가로 3:2 -->
+          <figure class="project-cover">
+            <div class="frame reveal-img"><img src="images/project-mosa.jpg" alt="THE MOSA — cover photograph" width="2400" height="1600" loading="lazy" decoding="async"></div>
+          </figure>
+          <div class="project-gallery">
+            <!-- 📷 project-mosa-2.jpg | 추가 사진 1 | 권장: 세로 4:5 -->
+            <figure class="work">
+              <div class="frame reveal-img"><img src="images/project-mosa-2.jpg" alt="THE MOSA — photograph 2" width="1600" height="2000" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">THE MOSA, No. 2</span><span>2026</span></figcaption>
+            </figure>
+            <!-- 📷 project-mosa-3.jpg | 추가 사진 2 | 권장: 세로 4:5 -->
+            <figure class="work">
+              <div class="frame reveal-img"><img src="images/project-mosa-3.jpg" alt="THE MOSA — photograph 3" width="1600" height="2000" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">THE MOSA, No. 3</span><span>2026</span></figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── PROJECT 02 : KU데타 (영상 프로젝트) ── -->
+      <article class="project project--video wrap" aria-labelledby="p02-title">
+        <div class="project-meta">
+          <p class="project-num reveal">P — 02</p>
+          <h3 class="project-title reveal" id="p02-title" lang="ko">KU데타</h3>
+          <dl class="project-facts reveal">
+            <div><dt>Type</dt><dd>Short film</dd></div>
+            <div><dt>Year</dt><dd>2026</dd></div>
+            <div><dt>Role</dt><dd>Director, Editor</dd></div>
+          </dl>
+          <!-- ✏️ 실제 설명으로 바꾸세요 -->
+          <p class="project-desc reveal">A short film made with friends over one season. Small crew, borrowed lights, real locations.</p>
+        </div>
+        <div class="project-media">
+          <!-- 🎬 project-kudeta.jpg | 영상 대표 이미지 | 권장: 시네마 비율 2.39:1
+               ▶ href="..." 를 내 YouTube/Vimeo 영상 주소로 바꾸세요 -->
+          <figure class="project-cover video-cover">
+            <a class="video-link" href="https://www.youtube.com/" target="_blank" rel="noopener">
+              <span class="frame reveal-img"><img src="images/project-kudeta.jpg" alt="KU데타 — film still used as the cover" width="2390" height="1000" loading="lazy" decoding="async"></span>
+              <span class="play"><span class="play-icon" aria-hidden="true"></span>Watch the film<span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
+            <!-- (선택) 영상 파일을 직접 넣으려면 videos 폴더에 kudeta.mp4 를 넣고,
+                 위의 <a class="video-link">…</a> 를 지운 뒤 아래 줄을 주석 밖으로 꺼내세요.
+            <video class="video-file" controls preload="none" poster="images/project-kudeta.jpg" src="videos/kudeta.mp4"></video>
+            -->
+          </figure>
+          <div class="project-stills">
+            <!-- 📷 project-kudeta-2.jpg | 스틸컷 1 | 권장: 16:9 -->
+            <figure class="work">
+              <div class="frame reveal-img"><img src="images/project-kudeta-2.jpg" alt="KU데타 — film still 1" width="1920" height="1080" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Still, 00:03:12</span></figcaption>
+            </figure>
+            <!-- 📷 project-kudeta-3.jpg | 스틸컷 2 | 권장: 16:9 -->
+            <figure class="work">
+              <div class="frame reveal-img"><img src="images/project-kudeta-3.jpg" alt="KU데타 — film still 2" width="1920" height="1080" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Still, 00:11:48</span></figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- ── PROJECT 03 : 쿠왕 (영상 프로젝트) ── -->
+      <article class="project project--video wrap" aria-labelledby="p03-title">
+        <div class="project-meta">
+          <p class="project-num reveal">P — 03</p>
+          <h3 class="project-title reveal" id="p03-title" lang="ko">쿠왕</h3>
+          <dl class="project-facts reveal">
+            <div><dt>Type</dt><dd>Video series</dd></div>
+            <div><dt>Year</dt><dd>2025 — 2026</dd></div>
+            <div><dt>Role</dt><dd>Directing, Camera, Edit</dd></div>
+          </dl>
+          <!-- ✏️ 실제 설명으로 바꾸세요 -->
+          <p class="project-desc reveal">An ongoing video series built from everyday campus life — people, places and the rhythm in between.</p>
+        </div>
+        <div class="project-media">
+          <!-- 🎬 project-kuwang.jpg | 영상 대표 이미지 | 권장: 16:9 · ▶ href 를 내 영상 주소로 -->
+          <figure class="project-cover video-cover">
+            <a class="video-link" href="https://www.youtube.com/" target="_blank" rel="noopener">
+              <span class="frame reveal-img"><img src="images/project-kuwang.jpg" alt="쿠왕 — video cover still" width="2400" height="1350" loading="lazy" decoding="async"></span>
+              <span class="play"><span class="play-icon" aria-hidden="true"></span>Watch the video<span class="visually-hidden"> (opens in a new tab)</span></span>
+            </a>
+          </figure>
+          <div class="project-stills">
+            <!-- 📷 project-kuwang-2.jpg | 스틸컷 1 | 권장: 16:9 -->
+            <figure class="work">
+              <div class="frame reveal-img"><img src="images/project-kuwang-2.jpg" alt="쿠왕 — video still 1" width="1920" height="1080" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Episode 01</span></figcaption>
+            </figure>
+            <!-- 📷 project-kuwang-3.jpg | 스틸컷 2 | 권장: 16:9 -->
+            <figure class="work">
+              <div class="frame reveal-img"><img src="images/project-kuwang-3.jpg" alt="쿠왕 — video still 2" width="1920" height="1080" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Episode 02</span></figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+
+      <!-- ✚ 새 프로젝트 추가 방법
+           사진 프로젝트는 위의 THE MOSA <article> … </article> 전체를 복사해서
+           쿠왕 </article> 바로 아래에 붙여넣으세요. (영상 프로젝트는 KU데타 블록을 복사)
+           그다음 P — 04, 제목, 설명, id="p04-title"(위의 aria-labelledby도 같이),
+           사진 이름(project-new.jpg 등)을 바꾸고 images 폴더에 사진을 넣으면 됩니다. -->
+    </section>
+
+    <!-- ═════ ABOUT ═════ -->
+    <section class="about" id="about" data-theme="light" aria-labelledby="about-title">
+      <div class="about-grid wrap">
+        <!-- 📷 about.jpg | 자기소개 사진 | 권장: 세로 4:5 -->
+        <figure class="about-portrait">
+          <div class="frame reveal-img"><img src="images/about.jpg" alt="DOSTER holding a film camera" width="1600" height="2000" loading="lazy" decoding="async"></div>
+        </figure>
+        <div class="about-text">
+          <p class="eyebrow reveal">About</p>
+          <h2 class="display display--about reveal" id="about-title">One way of seeing.<br><em>Many ways of making.</em></h2>
+          <!-- ✏️ 자기소개 글 -->
+          <p class="about-ko reveal" lang="ko" style="--d:.12s">
+            사진을 찍고, 영상을 만들고, 코드를 공부합니다.
+            도구는 달라도 하는 일은 같습니다 — 오래 바라보고,
+            잊고 싶지 않은 것을 남기는 일. 이 웹사이트도
+            그렇게 직접 만든 작은 전시장입니다.
+          </p>
+        </div>
+      </div>
+      <ol class="practice wrap" aria-label="Practice">
+        <li class="reveal"><span class="practice-name">Photography</span><span class="practice-line">to hold a moment still.</span></li>
+        <li class="reveal"><span class="practice-name">Film</span><span class="practice-line">to trust the wait.</span></li>
+        <li class="reveal"><span class="practice-name">Video</span><span class="practice-line">to let it move.</span></li>
+        <li class="reveal"><span class="practice-name">Directing</span><span class="practice-line">to give it a shape.</span></li>
+        <li class="reveal"><span class="practice-name">Development</span><span class="practice-line">to build the room it lives in.</span></li>
+      </ol>
+      <p class="practice-coda wrap reveal">This site is one of those rooms — designed and written by hand, line by line.</p>
+    </section>
+
+    <!-- ═════ CONTACT ═════ ✏️ Instagram / Email 주소를 내 것으로 -->
+    <section class="contact" id="contact" data-theme="dark" aria-labelledby="contact-title">
+      <div class="wrap">
+        <h2 class="contact-title reveal" id="contact-title">LET'S MAKE<br>SOMETHING.</h2>
+        <ul class="contact-links">
+          <!-- ✏️ 예: https://www.instagram.com/내아이디 -->
+          <li class="reveal" style="--d:.1s"><a href="https://www.instagram.com/dostervibes?utm_source=ig_web_button_share_sheet&stkn=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram<span class="arrow" aria-hidden="true">↗</span><span class="visually-hidden"> (opens in a new tab)</span></a></li>
+          <!-- ✏️ 예: mailto:hello@doster.com -->
+          <li class="reveal" style="--d:.2s"><a href="mailto:songdohyeon111@gmail.com">Email<span class="arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+      </div>
+      <footer class="site-footer wrap">
+        <p>© <span id="year">2026</span> DOSTER. All photographs by DOSTER.</p>
+        <a href="#top">Back to the entrance ↑</a>
+      </footer>
+    </section>
+  </main>
+
+  <!-- 사진 크게 보기 창 (건드리지 않아도 됨) -->
+  <dialog class="viewer" id="viewer" aria-label="Photo viewer">
+    <button class="viewer-close" type="button">Close <span aria-hidden="true">✕</span></button>
+    <figure class="viewer-figure">
+      <img class="viewer-img" src="" alt="">
+      <figcaption class="viewer-caption"></figcaption>
+    </figure>
+    <button class="viewer-nav viewer-prev" type="button" aria-label="Previous photograph">←</button>
+    <button class="viewer-nav viewer-next" type="button" aria-label="Next photograph">→</button>
+    <p class="viewer-count" aria-live="polite"></p>
+  </dialog>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
