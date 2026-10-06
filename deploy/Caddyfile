@@ -1,5 +1,5 @@
 # Caddy가 Let's Encrypt 인증서를 자동 발급/갱신하고 HTTP(80)는 HTTPS(443)로 리다이렉트한다.
-dostervibes.kro.kr, meaterickchat.kro.kr {
+dostervibes.kro.kr {
 	encode zstd gzip
 	reverse_proxy 127.0.0.1:3000
 }
