@@ -1,19 +1,13 @@
-// 요청마다 렌더링해서 서버가 살아있는지 확인할 수 있게 함
+import Landing from "./_components/Landing";
+
+// 배포 정보(GIT_COMMIT / DEPLOYED_AT)는 PM2 가 런타임에 주입하므로 요청마다 렌더링한다.
 export const dynamic = "force-dynamic";
 
 export default function Home() {
-  const commit = process.env.GIT_COMMIT || "local";
-  const deployedAt = process.env.DEPLOYED_AT || "-";
+  const build = {
+    commit: process.env.GIT_COMMIT || "local",
+    deployedAt: process.env.DEPLOYED_AT || "",
+  };
 
-  return (
-    <main style={{ maxWidth: 640, margin: "80px auto", padding: "0 16px" }}>
-      <h1>chatting 테스트 페이지</h1>
-      <p>Next.js 앱이 정상적으로 동작하고 있습니다.</p>
-      <ul>
-        <li>커밋: <code>{commit}</code></li>
-        <li>배포 시각: {deployedAt}</li>
-        <li>서버 렌더링 시각: {new Date().toISOString()}</li>
-      </ul>
-    </main>
-  );
+  return <Landing build={build} />;
 }
