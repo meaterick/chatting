@@ -296,4 +296,5 @@
   /* 7. 푸터 연도 자동 */
   var year = doc.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
+
 })();
