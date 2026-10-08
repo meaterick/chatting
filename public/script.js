@@ -278,7 +278,7 @@
     var vImg = viewer.querySelector('.viewer-img');
     var vCap = viewer.querySelector('.viewer-caption');
     var vCount = viewer.querySelector('.viewer-count');
-    var current = 0, opener = null;
+    var current = 0, opener = null, savedY = 0;
 
     function viewables() {                       // 매번 DOM을 뒤지지 않고 캐시 (사진이 없어 교체되면 다시 만듦)
       if (!viewList) viewList = Array.prototype.slice.call(doc.querySelectorAll('.room img'))
@@ -302,7 +302,9 @@
     function open(img) {
       var i = viewables().indexOf(img); if (i < 0) return;
       opener = img; show(i);
+      savedY = window.scrollY;                     // 닫을 때 이 위치로 돌아옴 (iOS가 포커스 복원하며 화면을 옮기는 문제 방지)
       root.classList.add('viewer-open');
+      if (doc.activeElement && doc.activeElement !== body && doc.activeElement.blur) doc.activeElement.blur();   // 닫을 때 브라우저가 터치한 사진으로 '스크롤 이동'하지 않게
       viewer.showModal();
       viewer.querySelector('.viewer-close').focus();
     }
@@ -312,7 +314,18 @@
       root.classList.remove('viewer-open');
       vImg.removeAttribute('src');
       if (opener && opener.isConnected) opener.focus({ preventScroll: true });
+      restoreScroll();
+      requestAnimationFrame(restoreScroll);
+      setTimeout(restoreScroll, 80);
+      setTimeout(restoreScroll, 350);
     });
+    function restoreScroll() {                     // 부드러운 스크롤 없이 원래 자리로 즉시 복귀 → 확대 사진도 그대로
+      if (Math.abs(window.scrollY - savedY) < 2) return;
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, savedY);
+      root.style.scrollBehavior = '';
+      requestUpdate();
+    }
     viewables().forEach(function (img) {
       img.setAttribute('data-viewable', '');
       img.setAttribute('tabindex', '0');
