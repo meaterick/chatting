@@ -290,6 +290,7 @@ img[data-viewable] { cursor: zoom-in; }
 .contact-links a:hover::after, .contact-links a:focus-visible::after { transform: scaleX(1); }
 .contact-links .arrow { font-size: .8em; color: var(--muted); }
 .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px 32px; padding-top: var(--space-l); padding-bottom: 40px; font: 400 .6875rem/1.6 var(--mono); letter-spacing: .08em; color: var(--muted); }
+.site-footer .nw { white-space: nowrap; }
 .site-footer a { text-decoration: none; }
 .site-footer a:hover { color: var(--fg); }
 
