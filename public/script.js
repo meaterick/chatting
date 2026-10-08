@@ -347,10 +347,10 @@
     }, { passive: true });
   }
 
-  /* 7. 첫 화면 SCROLL 안내: 10초 동안 아무 움직임이 없으면 서서히 나타남 */
+  /* 7. 첫 화면 SCROLL 안내: 15초 동안 아무 움직임이 없으면 서서히 나타남 */
   var cue = doc.querySelector('.scroll-cue');
   if (cue) {
-    var CUE_DELAY = 10000, lastMove = Date.now(), cueTimer = null;
+    var CUE_DELAY = 15000, lastMove = Date.now(), cueTimer = null;
     var cueEvents = ['pointermove', 'pointerdown', 'wheel', 'keydown', 'touchstart', 'scroll'];
     var cueActive = function () { lastMove = Date.now(); };
     var cueCheck = function () {
