@@ -17,7 +17,7 @@
   /* 1. 사진 파일이 없으면 그 자리에 파일 이름 상자 표시 */
   function showMissing(img) {
     if (!img || !img.parentNode || img.getAttribute('data-missing')) return;
-    if (!img.getAttribute('src') || img.closest('#viewer')) return;   // 뷰어의 빈 이미지는 '사진 없음'이 아님
+    if (!img.getAttribute('src') || img.closest('#viewer') || img.classList.contains('img-guard')) return;   // 뷰어의 빈 이미지는 '사진 없음'이 아님
     if (img.hasAttribute('data-optional')) { img.remove(); viewList = null; return; }   // 네거티브(-nt)가 없으면 상자 없이 생략
     img.setAttribute('data-missing', '1');
     var file = img.getAttribute('src') || '(no file)';
@@ -273,12 +273,48 @@
   applyMode();
 
   /* 6. 사진 크게 보기 (Enter 열기 · ← → 이동 · Esc 닫기 · 휴대폰은 좌우로 밀기) */
+  /* 사진 보호: 사진 위에 보이지 않는 막(워터마크가 들어간 저해상도 사본)을 덮음.
+     우클릭 저장·복사·드래그를 하면 원본 대신 이 사본이 저장됨. 사본은 images/guard/ 에 같은 이름으로 있음 */
+  function guardSrc(img) {
+    var s = (img.getAttribute('src') || '').split('?')[0];
+    return s.indexOf('images/') === 0 && s.indexOf('images/guard/') !== 0 ? 'images/guard/' + s.slice(7) : null;
+  }
+  function makeGuard(src) {
+    var g = doc.createElement('img');
+    g.className = 'img-guard'; g.alt = ''; g.setAttribute('aria-hidden', 'true');
+    g.decoding = 'async';
+    if (src) { g.loading = 'lazy'; g.src = src; }
+    return g;
+  }
+  function guardAll() {
+    Array.prototype.forEach.call(doc.querySelectorAll('main img'), function (img) {
+      if (img.hasAttribute('data-negative') || img.classList.contains('img-guard')) return;
+      var src = guardSrc(img), pa = img.parentNode;
+      if (!src || !pa || pa.querySelector(':scope > .img-guard')) return;
+      img.setAttribute('draggable', 'false');
+      var g = makeGuard(src); g.__img = img;
+      if (img.hasAttribute('data-viewable')) g.style.cursor = 'zoom-in';
+      if (getComputedStyle(pa).position === 'static') pa.style.position = 'relative';
+      pa.appendChild(g);
+    });
+  }
+
   var viewer = doc.getElementById('viewer');
   if (viewer && typeof viewer.showModal === 'function') {
     var vImg = viewer.querySelector('.viewer-img');
     var vCap = viewer.querySelector('.viewer-caption');
     var vCount = viewer.querySelector('.viewer-count');
     var current = 0, opener = null, savedY = 0;
+    var vGuard = makeGuard();                      // 뷰어의 큰 사진 위 보호막 (사진 크기·위치에 맞춤)
+    vImg.parentNode.appendChild(vGuard);
+    function placeVGuard() {
+      var st = vGuard.style;
+      st.left = vImg.offsetLeft + 'px'; st.top = vImg.offsetTop + 'px';
+      st.setProperty('width', vImg.offsetWidth + 'px', 'important');
+      st.setProperty('height', vImg.offsetHeight + 'px', 'important');
+    }
+    vImg.addEventListener('load', placeVGuard);
+    window.addEventListener('resize', function () { if (viewer.open) placeVGuard(); });
 
     function viewables() {                       // 매번 DOM을 뒤지지 않고 캐시 (사진이 없어 교체되면 다시 만듦)
       if (!viewList) viewList = Array.prototype.slice.call(doc.querySelectorAll('.room img'))
@@ -296,6 +332,8 @@
       var img = list[current];
       vImg.src = img.currentSrc || img.src;
       vImg.alt = img.alt || '';
+      var gs = guardSrc(img);
+      if (gs) vGuard.src = gs; else vGuard.removeAttribute('src');
       vCap.textContent = captionFor(img);
       vCount.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(list.length).padStart(2, '0');
     }
@@ -313,6 +351,7 @@
     viewer.addEventListener('close', function () {
       root.classList.remove('viewer-open');
       vImg.removeAttribute('src');
+      vGuard.removeAttribute('src');
       if (opener && opener.isConnected) opener.focus({ preventScroll: true });
       restoreScroll();
       requestAnimationFrame(restoreScroll);
@@ -333,7 +372,8 @@
       img.setAttribute('aria-label', 'View larger: ' + (img.alt || 'photograph'));
     });
     doc.addEventListener('click', function (e) {
-      var img = e.target.closest && e.target.closest('img[data-viewable]');
+      var t = e.target && e.target.__img ? e.target.__img : e.target;   // 보호막을 눌렀으면 그 아래 사진
+      var img = t.closest && t.closest('img[data-viewable]');
       if (img) open(img);
     });
     doc.addEventListener('keydown', function (e) {
@@ -359,6 +399,8 @@
       touchX = null;
     }, { passive: true });
   }
+
+  guardAll();                                    // 페이지의 모든 사진에 보호막
 
   /* 7. 첫 화면 SCROLL 안내: 15초 동안 아무 움직임이 없으면 서서히 나타남 */
   var cue = doc.querySelector('.scroll-cue');

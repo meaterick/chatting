@@ -186,6 +186,11 @@ body.menu-open .site-header { background-color: var(--bg); color: var(--fg); bor
 .frame { display: block; overflow: hidden; line-height: 0; }
 .frame img { width: 100%; }
 img[data-viewable] { cursor: zoom-in; }
+/* 사진 보호막: 사진과 같은 자리에 투명하게 겹친 저해상도 워터마크 사본 (script.js가 추가) */
+img.img-guard { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; margin: 0 !important; opacity: 0 !important; transform: none !important; animation: none !important; transition: none !important; z-index: 2; -webkit-user-select: none; user-select: none; }
+.viewer-figure { position: relative; }
+.viewer img.img-guard { inset: auto; }
+img { -webkit-touch-callout: none; }   /* 휴대폰: 사진 길게 눌러 저장하는 메뉴 끄기 */
 
 .label { display: flex; flex-direction: column; gap: 2px; margin-top: 18px; font: 400 .6875rem/1.55 var(--mono); letter-spacing: .06em; color: var(--muted); }
 .label-title { font-family: var(--serif); font-style: italic; font-size: .95rem; letter-spacing: 0; line-height: 1.4; color: var(--fg); margin-bottom: 4px; }
