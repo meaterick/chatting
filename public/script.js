@@ -7,6 +7,9 @@
   var reduceMQ = window.matchMedia('(prefers-reduced-motion: reduce)');
   var desktopMQ = window.matchMedia('(min-width: 900px)');
   var reduceMotion = reduceMQ.matches;
+  // CSS가 스크롤 연동(첫 화면·큰 사진 확대)을 직접 처리하는 브라우저에서는 JS가 하지 않음
+  var cssScroll = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()'));
+  var viewList = null;                           // 사진 뷰어 목록 캐시
 
   function clamp(v, a, b) { return Math.min(b, Math.max(a, v)); }
   function easeInOut(t) { return t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2; }
@@ -14,6 +17,8 @@
   /* 1. 사진 파일이 없으면 그 자리에 파일 이름 상자 표시 */
   function showMissing(img) {
     if (!img || !img.parentNode || img.getAttribute('data-missing')) return;
+    if (!img.getAttribute('src') || img.closest('#viewer')) return;   // 뷰어의 빈 이미지는 '사진 없음'이 아님
+    if (img.hasAttribute('data-optional')) { img.remove(); viewList = null; return; }   // 네거티브(-nt)가 없으면 상자 없이 생략
     img.setAttribute('data-missing', '1');
     var file = img.getAttribute('src') || '(no file)';
     var box = doc.createElement('div');
@@ -28,6 +33,7 @@
     var frame = img.closest('.reveal-img');
     if (frame) frame.classList.add('is-in');
     img.replaceWith(box);
+    viewList = null;
   }
   window.dosterShowMissing = showMissing;
   (window.__dosterMissing || []).forEach(showMissing);
@@ -69,10 +75,15 @@
   var menu = doc.getElementById('menu');
   var menuToggle = doc.querySelector('.menu-toggle');
   var menuOpen = false, lastY = window.scrollY;
+  var metrics = { heroH: 0, headerH: 64 };       // 매 프레임 읽지 않고 필요할 때만 측정
+  function measure() {
+    metrics.heroH = hero ? hero.offsetHeight : 0;
+    metrics.headerH = header ? header.offsetHeight : 64;
+  }
 
   function updateHeader(y) {
     if (!header) return;
-    var heroEnd = hero ? hero.offsetHeight - (header.offsetHeight || 64) : 0;
+    var heroEnd = metrics.heroH - metrics.headerH;
     header.classList.toggle('is-top', y < heroEnd);
     if (menuOpen) { header.classList.remove('is-hidden'); lastY = y; return; }
     var d = y - lastY;
@@ -112,13 +123,17 @@
     return { el: el, track: el.querySelector('.hscroll-track'), dist: 0 };
   });
   var expands = Array.prototype.slice.call(doc.querySelectorAll('[data-expand]')).map(function (el) {
-    return { el: el, frame: el.querySelector('.expand-frame') };
+    var fig = el.closest('figure');
+    return { el: el, frame: el.querySelector('.expand-frame'), sticky: el.querySelector('.expand-sticky'), label: fig && fig.querySelector('figcaption') };
+  });
+  var negFrames = Array.prototype.slice.call(doc.querySelectorAll('.negative-fade')).map(function (el) {
+    return { el: el, img: el.querySelector('img[data-negative]'), zoom: el.querySelector('.pano-zoom') };
   });
   var pinned = false;
 
-  function heroFx(y, vh) {                       // 첫 화면: 사진은 천천히, 글자는 서서히 사라짐
-    if (!heroImg || !hero) return;
-    var h = hero.offsetHeight || vh;
+  function heroFx(y, vh) {                       // 첫 화면: 사진은 천천히, 글자는 서서히 사라짐 (CSS 미지원 브라우저용)
+    if (cssScroll || !heroImg || !hero) return;
+    var h = metrics.heroH || vh;
     if (y > h) return;
     var p = y / h;
     heroImg.style.transform = 'translate3d(0,' + (y * 0.28).toFixed(1) + 'px,0) scale(' + (1 + p * 0.05).toFixed(4) + ')';
@@ -127,28 +142,47 @@
       heroContent.style.transform = 'translate3d(0,' + (y * -0.08).toFixed(1) + 'px,0)';
     }
   }
-  function zoomFx(frame, vh) {                   // 화면 가득 사진: 지나가며 아주 살짝 확대
+  function zoomFx(frame, vh) {                   // 화면 가득 사진: 지나가며 아주 살짝 확대 (CSS 미지원 브라우저용)
     var r = frame.getBoundingClientRect();
     if (r.bottom < -50 || r.top > vh + 50) return;
     var img = frame.querySelector('img'); if (!img) return;
     var p = clamp((vh - r.top) / (vh + r.height), 0, 1);
     img.style.transform = 'scale(' + (1 + p * 0.1).toFixed(4) + ')';
   }
+  function negFx(o, vh) {                        // 파노라마: 고정된 동안 네거티브 → 현상본 + 천천히 확대 (CSS 미지원 브라우저용, CSS와 같은 구간)
+    var r = o.el.getBoundingClientRect();
+    if (r.bottom < -50 || r.top > vh + 50) return;
+    var total = r.height - vh;
+    var p = total > 0 ? clamp(-r.top / total, 0, 1) : 1;                  // 고정 구간 진행도
+    var cp = clamp((vh - r.top) / (vh + r.height), 0, 1);                  // 지나가는 전체 진행도
+    if (o.img) o.img.style.opacity = (1 - clamp((p - 0.10) / 0.55, 0, 1)).toFixed(3);
+    if (o.zoom) o.zoom.style.transform = 'scale(' + (1 + cp * 0.1).toFixed(4) + ')';
+  }
+  function measureE(o) {                         // 휴대폰: 작은 사진 아래 빈 공간만큼 캡션을 끌어올려 사진에 붙임
+    if (!o.label || !o.sticky || !o.frame) return;
+    if (desktopMQ.matches || reduceMotion) { o.label.style.marginTop = ''; return; }
+    var gap = (o.sticky.offsetHeight - o.frame.offsetHeight) / 2;
+    o.label.style.marginTop = gap > 18 ? (18 - gap).toFixed(0) + 'px' : '';
+  }
   function measureH(o) {                         // 가로 시퀀스 길이 계산
     if (!o.track) return;
-    if (!pinned) { o.el.style.height = ''; o.track.style.transform = ''; return; }
+    if (!pinned) {                               // 휴대폰: 바뀐 게 있을 때만 되돌림 (주소창 resize마다 레이아웃 안 건드림)
+      if (o.measured) { o.el.style.height = ''; o.track.style.transform = ''; o.measured = false; }
+      return;
+    }
     o.dist = Math.max(0, o.track.offsetWidth - window.innerWidth);
     o.el.style.height = (o.dist + window.innerHeight) + 'px';
+    o.measured = true;
   }
   function hFx(o, vh) {                          // 세로 스크롤 → 가로 이동
-    if (!pinned || !o.track || o.dist <= 0) return;
+    if (!pinned || !o.visible || !o.track || o.dist <= 0) return;
     var r = o.el.getBoundingClientRect();
     if (r.bottom < 0 || r.top > vh) return;
     var p = clamp(-r.top / o.dist, 0, 1);
     o.track.style.transform = 'translate3d(' + (-p * o.dist).toFixed(1) + 'px,0,0)';
   }
   function expandFx(o, vh) {                     // 작은 액자 → 화면 전체
-    if (!o.frame || !o.el.classList.contains('is-active')) return;
+    if (!o.visible || !o.frame || !o.el.classList.contains('is-active')) return;
     var r = o.el.getBoundingClientRect();
     if (r.bottom < 0 || r.top > vh) return;
     var total = r.height - vh;
@@ -164,13 +198,25 @@
     updateHeader(y);
     if (reduceMotion) return;
     heroFx(y, vh);
-    zoomFrames.forEach(function (f) { zoomFx(f, vh); });
+    if (!cssScroll) { zoomFrames.forEach(function (f) { zoomFx(f, vh); }); negFrames.forEach(function (o) { negFx(o, vh); }); }
     hscrolls.forEach(function (o) { hFx(o, vh); });
     expands.forEach(function (o) { expandFx(o, vh); });
   }
   function requestUpdate() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
 
+  // 화면 근처에 있는 가로 시퀀스 · 확대 액자만 계산
+  var fxItems = hscrolls.concat(expands);
+  fxItems.forEach(function (o) { o.visible = !('IntersectionObserver' in window); });
+  if ('IntersectionObserver' in window) {
+    var fxObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) { en.target.__fx.visible = en.isIntersecting; });
+      requestUpdate();
+    });
+    fxItems.forEach(function (o) { o.el.__fx = o; fxObserver.observe(o.el); });
+  }
+
   function applyMode() {
+    measure();
     pinned = !reduceMotion && desktopMQ.matches;
     hscrolls.forEach(function (o) { o.el.classList.toggle('is-pinned', pinned); measureH(o); });
     expands.forEach(function (o) {
@@ -181,8 +227,10 @@
       if (heroImg) heroImg.style.transform = '';
       if (heroContent) { heroContent.style.opacity = ''; heroContent.style.transform = ''; }
       zoomFrames.forEach(function (f) { var i = f.querySelector('img'); if (i) i.style.transform = ''; });
+      negFrames.forEach(function (o) { if (o.img) o.img.style.opacity = ''; if (o.zoom) o.zoom.style.transform = ''; });
       revealAll();
     }
+    expands.forEach(measureE);
     if (menuOpen && desktopMQ.matches) setMenu(false);
     requestUpdate();
   }
@@ -205,13 +253,18 @@
     });
   });
 
+  expands.forEach(function (o) {
+    var img = o.frame && o.frame.querySelector('img');
+    if (img) img.addEventListener('load', function () { measureE(o); });
+  });
+
   var resizeTimer = null;
   window.addEventListener('resize', function () {
     clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(function () { hscrolls.forEach(measureH); requestUpdate(); }, 120);
+    resizeTimer = setTimeout(function () { measure(); hscrolls.forEach(measureH); expands.forEach(measureE); requestUpdate(); }, 120);
   });
   window.addEventListener('scroll', requestUpdate, { passive: true });
-  window.addEventListener('load', function () { hscrolls.forEach(measureH); requestUpdate(); });
+  window.addEventListener('load', function () { measure(); hscrolls.forEach(measureH); expands.forEach(measureE); requestUpdate(); });
   function onMQChange() { reduceMotion = reduceMQ.matches; applyMode(); }
   if (reduceMQ.addEventListener) {
     reduceMQ.addEventListener('change', onMQChange);
@@ -227,9 +280,10 @@
     var vCount = viewer.querySelector('.viewer-count');
     var current = 0, opener = null;
 
-    function viewables() {
-      return Array.prototype.slice.call(doc.querySelectorAll('.room img, .project-gallery img, .project-stills img'))
-        .filter(function (img) { return !img.closest('a'); });
+    function viewables() {                       // 매번 DOM을 뒤지지 않고 캐시 (사진이 없어 교체되면 다시 만듦)
+      if (!viewList) viewList = Array.prototype.slice.call(doc.querySelectorAll('.room img'))
+        .filter(function (img) { return !img.closest('a') && !img.hasAttribute('data-negative'); });
+      return viewList;
     }
     function captionFor(img) {
       var fig = img.closest('figure'), cap = fig && fig.querySelector('figcaption');
@@ -293,7 +347,23 @@
     }, { passive: true });
   }
 
-  /* 7. 푸터 연도 자동 */
+  /* 7. 첫 화면 SCROLL 안내: 10초 동안 아무 움직임이 없으면 서서히 나타남 */
+  var cue = doc.querySelector('.scroll-cue');
+  if (cue) {
+    var CUE_DELAY = 10000, lastMove = Date.now(), cueTimer = null;
+    var cueEvents = ['pointermove', 'pointerdown', 'wheel', 'keydown', 'touchstart', 'scroll'];
+    var cueActive = function () { lastMove = Date.now(); };
+    var cueCheck = function () {
+      var idle = Date.now() - lastMove;
+      if (idle < CUE_DELAY || window.scrollY > 40) { cueTimer = setTimeout(cueCheck, Math.max(1000, CUE_DELAY - idle)); return; }
+      cue.classList.add('is-visible');
+      cueEvents.forEach(function (ev) { window.removeEventListener(ev, cueActive); });
+    };
+    cueEvents.forEach(function (ev) { window.addEventListener(ev, cueActive, { passive: true }); });
+    cueTimer = setTimeout(cueCheck, CUE_DELAY);
+  }
+
+  /* 8. 푸터 연도 자동 */
   var year = doc.getElementById('year');
   if (year) year.textContent = String(new Date().getFullYear());
 

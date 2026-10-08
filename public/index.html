@@ -2,8 +2,9 @@
 <!--
   DOSTER — index.html : 사이트의 "내용"(글, 사진 위치)
   안녕하세용! test
-  ▶ 사진 바꾸기: images 폴더에 "같은 이름"의 사진을 넣으면 끝. 이 파일은 고칠 필요 없음.
-  ▶ 찾기: ⌘+F 로 "photo01" 같은 파일 이름을 검색하면 📷 주석이 붙은 위치가 나옵니다.
+  ▶ 사진 바꾸기: images 안의 Room 폴더(people · daily · film · portrait · experimental)에 "같은 이름"의 사진을 넣으면 끝.
+     hero.webp 와 about.webp 는 images 폴더 바로 아래에 둡니다. 이 파일은 고칠 필요 없음.
+  ▶ 찾기: ⌘+F 로 "people/photo01" 같은 경로를 검색하면 📷 주석이 붙은 위치가 나옵니다.
   ▶ 캡션: <figcaption> 안의 글자만 바꾸세요. alt="..." 는 화면 낭독기가 읽는 사진 설명입니다.
 -->
 <html lang="en" class="no-js">
@@ -42,7 +43,6 @@
     <nav class="nav" aria-label="Main">
       <ul class="nav-list">
         <li><a href="#exhibition">Exhibition</a></li>
-        <li><a href="#projects">Projects</a></li>
         <li><a href="#about">About</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
@@ -57,9 +57,8 @@
     <nav aria-label="Mobile">
       <ol class="menu-list">
         <li><a href="#exhibition"><span>01</span>Exhibition</a></li>
-        <li><a href="#projects"><span>02</span>Projects</a></li>
-        <li><a href="#about"><span>03</span>About</a></li>
-        <li><a href="#contact"><span>04</span>Contact</a></li>
+        <li><a href="#about"><span>02</span>About</a></li>
+        <li><a href="#contact"><span>03</span>Contact</a></li>
       </ol>
     </nav>
   </div>
@@ -77,12 +76,12 @@
              width="2400" height="1600" fetchpriority="high" decoding="async">
       </div>
       <div class="hero-content" id="hero-content">
-        <p class="hero-kicker">An online exhibition — Photographs, films &amp; code</p>
+        <p class="hero-kicker">An online exhibition — <span class="nw">Photographs, films &amp; code</span></p>
         <h1 class="hero-title">DOSTER</h1>
         <p class="hero-roles">Photographer <span aria-hidden="true">/</span> Filmmaker <span aria-hidden="true">/</span> Developer</p>
       </div>
       <a class="scroll-cue" href="#intro" aria-label="Scroll to enter the exhibition">
-        <span class="scroll-cue-line" aria-hidden="true"></span>
+        <span class="scroll-cue-ring" aria-hidden="true"><span class="scroll-cue-arrow"></span></span>
         <span class="scroll-cue-text">Scroll</span>
       </a>
     </section>
@@ -113,7 +112,7 @@
           <li class="reveal" style="--d:.06s"><a href="#room-daily"><span class="num">02</span><span class="name">Daily</span><span class="desc">Ordinary light</span></a></li>
           <li class="reveal" style="--d:.12s"><a href="#room-film"><span class="num">03</span><span class="name">Film</span><span class="desc">36 frames, no preview</span></a></li>
           <li class="reveal" style="--d:.18s"><a href="#room-portrait"><span class="num">04</span><span class="name">Portrait</span><span class="desc">You let me look</span></a></li>
-          <li class="reveal" style="--d:.24s"><a href="#room-experimental"><span class="num">05</span><span class="name">Experimental</span><span class="desc">Mistakes I kept</span></a></li>
+          <li class="reveal" style="--d:.24s"><a href="#room-experimental"><span class="num">05</span><span class="name">Experimental</span><span class="desc">Long exposures</span></a></li>
         </ol>
       </div>
     </section>
@@ -126,34 +125,59 @@
         <p class="room-text reveal" style="--d:.15s">Strangers who looked back. Friends who didn't notice. Every face carries a weather of its own.</p>
       </header>
 
-      <!-- 📷 photo01.webp | PEOPLE 대표 사진 · 화면 가득 | 권장: 가로 3:2 -->
+      <!-- 📷 people/photo01.webp | PEOPLE 대표 사진 · 화면 가득 | 권장: 가로 3:2 -->
       <figure class="work layout-full">
         <div class="frame zoom-on-scroll">
-          <img src="images/photo01.webp" alt="People — a stranger crossing the street, looking back at the camera"
+          <img src="images/people/photo01.webp" alt="People — a stranger crossing the street, looking back at the camera"
                width="2400" height="1600" loading="lazy" decoding="async">
         </div>
         <figcaption class="label wrap">
-          <span class="label-title">Untitled (Crosswalk)</span><span>Canon QL17 G3</span><span>Ektar 100</span><span>Singapore, 2026</span>
+          <span class="label-title">Passing By</span><span>Canon QL17 G3</span><span>Ektar 100</span><span>Singapore, 2026</span>
         </figcaption>
       </figure>
 
       <div class="layout-pair wrap">
-        <!-- 📷 photo02.webp | PEOPLE 두 장 구성 (왼쪽) | 권장: 세로 4:5 -->
+        <!-- 📷 people/photo02.webp | PEOPLE 두 장 구성 (왼쪽) | 권장: 세로 4:5 -->
         <figure class="work pair-a">
           <div class="frame reveal-img">
-            <img src="images/photo02.webp" alt="People — a friend laughing, half turned away"
+            <img src="images/people/photo02.webp" alt="People — a friend laughing, half turned away"
                  width="1600" height="2000" loading="lazy" decoding="async">
           </div>
-          <figcaption class="label"><span class="label-title">Friend, Laughing</span><span>Nikon F4</span><span>Portra 400</span><span>Seoul, 2026</span></figcaption>
+          <figcaption class="label"><span class="label-title">Looking for a Four-Leaf Clover</span><span>Canon QL17 G3</span><span>vision3 500T</span><span>Seoul, 2025</span></figcaption>
         </figure>
-        <!-- 📷 photo03.webp | PEOPLE 두 장 구성 (오른쪽, 아래로 엇갈림) | 권장: 세로 4:5 -->
+        <!-- 📷 people/photo03.webp | PEOPLE 두 장 구성 (오른쪽, 아래로 엇갈림) | 권장: 세로 4:5 -->
         <figure class="work pair-b">
           <div class="frame reveal-img">
-            <img src="images/photo03.webp" alt="People — a person waiting alone at a bus stop"
+            <img src="images/people/photo03.webp" alt="People — a person waiting alone at a bus stop"
                  width="1600" height="2000" loading="lazy" decoding="async">
           </div>
 
-          <figcaption class="label"><span class="label-title">Waiting</span><span>Nikon F4</span><span>HP5 Plus</span><span>Busan, 2025</span></figcaption>
+          <figcaption class="label"><span class="label-title">Waiting</span><span>Canon QL17 G3</span><span>Ektar 100</span><span>Singapore, 2026</span></figcaption>
+        </figure>
+      </div>
+
+      <!-- 📷 people/photo04.webp | PEOPLE 4번째 · 크게 가운데 | 권장: 가로 3:2 -->
+      <figure class="work layout-center wrap">
+        <div class="frame reveal-img">
+          <img src="images/people/photo04.webp" alt="People — photograph 4" width="2400" height="1600" loading="lazy" decoding="async">
+        </div>
+        <figcaption class="label"><span class="label-title">Photographing in Dongmyo</span><span>Nikon F4</span><span>Lomography 100</span><span>Seoul, 2026</span></figcaption>
+      </figure>
+
+      <div class="layout-pair layout-pair--flip wrap">
+        <!-- 📷 people/photo05.webp | PEOPLE 두 장 구성 (오른쪽, 크게) | 권장: 세로 4:5 -->
+        <figure class="work pair-a">
+          <div class="frame reveal-img">
+            <img src="images/people/photo05.webp" alt="People — photograph 5" width="1600" height="2000" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="label"><span class="label-title">On the Tube</span><span>Nikon F4</span><span>Lomography 100</span><span>Busan, 2026</span></figcaption>
+        </figure>
+        <!-- 📷 people/photo06.webp | PEOPLE 두 장 구성 (왼쪽, 아래로 엇갈림) | 권장: 세로 4:5 -->
+        <figure class="work pair-b">
+          <div class="frame reveal-img">
+            <img src="images/people/photo06.webp" alt="People — photograph 6" width="1600" height="2000" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="label"><span class="label-title">Walking Along</span><span>Nikon F4</span><span>CineStill 800T</span><span>Seoul, 2026</span></figcaption>
         </figure>
       </div>
     </section>
@@ -163,45 +187,50 @@
       <header class="room-head wrap">
         <p class="room-num reveal">02 —</p>
         <h2 class="room-title reveal" id="room-daily-title">DAILY</h2>
-        <p class="room-text reveal" style="--d:.15s">Nothing happens here — a kitchen, a bus window, 7 a.m. That is exactly why I keep them.</p>
+        <p class="room-text reveal" style="--d:.15s">Nothing happens here — a hotel bed, a beach at dusk, a page turned, a throw across the grass. That is exactly why I keep them.</p>
       </header>
 
-      <!-- 📷 photo04.webp | DAILY 대표 사진 · 크게 가운데 | 권장: 가로 3:2 (세로 사진도 잘리지 않음) -->
+      <!-- 📷 daily/photo01.webp | DAILY 대표 사진 · 크게 가운데 | 권장: 가로 3:2 (세로 사진도 잘리지 않음) -->
       <figure class="work layout-center wrap">
         <div class="frame reveal-img">
-          <img src="images/photo04.webp" alt="Daily — morning light falling across a small kitchen table"
+          <img src="images/daily/photo01.webp" alt="Daily — someone sitting up in a hotel bed, a lamp glowing beside them"
                width="2400" height="1600" loading="lazy" decoding="async">
         </div>
-        <figcaption class="label"><span class="label-title">Morning, Kitchen</span><span>Ricoh GR III</span><span>Digital</span><span>Seoul, 2026</span></figcaption>
+        <figcaption class="label"><span class="label-title">Out of Bed</span><span>Canon QL17 G3</span><span>Vision3 500T</span><span>Incheon, 2026</span></figcaption>
       </figure>
 
       <!-- 가로 시퀀스: 컴퓨터에서는 아래로 스크롤하면 옆으로 흐르고, 휴대폰에서는 손가락으로 넘김 -->
       <div class="hscroll" data-hscroll>
         <div class="hscroll-sticky">
-          <div class="hscroll-track" tabindex="0" role="group" aria-label="Daily — a horizontal sequence of four photographs">
+          <div class="hscroll-track" tabindex="0" role="group" aria-label="Daily — a horizontal sequence of five photographs">
             <div class="hs-intro">
               <p class="eyebrow">Sequence</p>
-              <p class="hs-title">A week of<br><em>ordinary light.</em></p>
+              <p class="hs-title">Days of<br><em>ordinary light.</em></p>
             </div>
-            <!-- 📷 photo05.webp | DAILY 가로 시퀀스 1 | 권장: 가로 3:2 -->
+            <!-- 📷 daily/photo02.webp | DAILY 가로 시퀀스 1 | 권장: 가로 3:2 -->
             <figure class="work hs-item">
-              <div class="frame reveal-img"><img src="images/photo05.webp" alt="Daily — Monday, a crowded subway platform" width="1800" height="1200" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Mon. 07:42</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+              <div class="frame reveal-img"><img src="images/daily/photo02.webp" alt="Daily — a woman with her hair in a bun walking past bollards, carrying white flowers" width="1800" height="1200" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">In Passing</span><span>Nikon F4</span><span>Ektar 100</span><span>Busan, 2026</span></figcaption>
             </figure>
-            <!-- 📷 photo06.webp | DAILY 가로 시퀀스 2 | 권장: 세로 3:4 -->
+            <!-- 📷 daily/photo03.webp | DAILY 가로 시퀀스 2 | 권장: 세로 3:4 -->
             <figure class="work hs-item">
-              <div class="frame reveal-img"><img src="images/photo06.webp" alt="Daily — Tuesday, a window seat on a city bus" width="1200" height="1600" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Tue. 12:10</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+              <div class="frame reveal-img"><img src="images/daily/photo03.webp" alt="Daily — two people sitting on a beach, a long white bridge across the water" width="1200" height="1600" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Afternoon by the Sea</span><span>Mamiya RB67</span><span>CineStill 400D</span><span>Busan, 2026</span></figcaption>
             </figure>
-            <!-- 📷 photo07.webp | DAILY 가로 시퀀스 3 | 권장: 가로 3:2 -->
+            <!-- 📷 daily/photo04.webp | DAILY 가로 시퀀스 3 | 권장: 가로 3:2 -->
             <figure class="work hs-item">
-              <div class="frame reveal-img"><img src="images/photo07.webp" alt="Daily — Wednesday, late sun on an empty hallway" width="1800" height="1200" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Wed. 17:55</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+              <div class="frame reveal-img"><img src="images/daily/photo04.webp" alt="Daily — a man in a knitted beanie reading in a bookstore, warm lamps behind him" width="1800" height="1200" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">A Cozy Read</span><span>Canon QL17 G3</span><span>CineStill 800T</span><span>Seoul, 2025</span></figcaption>
             </figure>
-            <!-- 📷 photo08.webp | DAILY 가로 시퀀스 4 | 권장: 정사각형 1:1 -->
+            <!-- 📷 daily/photo05.webp | DAILY 가로 시퀀스 4 | 권장: 정사각형 1:1 -->
             <figure class="work hs-item">
-              <div class="frame reveal-img"><img src="images/photo08.webp" alt="Daily — Thursday night, a convenience store glowing on a dark street" width="1600" height="1600" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Thu. 23:31</span><span>Ricoh GR III</span><span>Seoul, 2026</span></figcaption>
+              <div class="frame reveal-img"><img src="images/daily/photo05.webp" alt="Daily — a police officer in a white helmet at a crosswalk, in black and white" width="1600" height="1600" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">Order in the Streets</span><span>Canon QL17 G3</span><span>Double X</span><span>Seoul, 2026</span></figcaption>
+            </figure>
+            <!-- 📷 daily/photo06.webp | DAILY 가로 시퀀스 5 | 권장: 가로 3:2 -->
+            <figure class="work hs-item">
+              <div class="frame reveal-img"><img src="images/daily/photo06.webp" alt="Daily — a woman mid-throw on a grass field, tents and trees behind her" width="1800" height="1200" loading="lazy" decoding="async"></div>
+              <figcaption class="label"><span class="label-title">The Throw</span><span>Nikon F4</span><span>CineStill 800T</span><span>Seoul, 2026</span></figcaption>
             </figure>
           </div>
         </div>
@@ -217,15 +246,30 @@
       </header>
 
       <div class="layout-asym wrap">
-        <!-- 📷 photo09.webp | FILM 대표 사진 · 왼쪽에 크게 | 권장: 가로 3:2 -->
+        <!-- 📷 film/photo01.webp | FILM 대표 사진 · 왼쪽에 크게 | 권장: 가로 3:2 -->
         <figure class="work asym-main">
-          <div class="frame reveal-img"><img src="images/photo09.webp" alt="Film — the inside of a night bus glowing under tungsten light" width="2400" height="1600" loading="lazy" decoding="async"></div>
-          <figcaption class="label"><span class="label-title">Night Bus</span><span>Nikon F4</span><span>CineStill 800T</span><span>Seoul, 2025</span></figcaption>
+          <div class="frame reveal-img"><img src="images/film/photo01.webp" alt="Film — the inside of a night bus glowing under tungsten light" width="2400" height="1600" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">Serendipity</span><span>Canon QL17 G3</span><span>Vision3 250D</span><span>Seoul, 2026</span></figcaption>
         </figure>
-        <!-- 📷 photo10.webp | FILM 작은 세로 사진 · 오른쪽 아래 | 권장: 세로 2:3 -->
+        <!-- 📷 film/photo02.webp | FILM 작은 세로 사진 · 오른쪽 아래 | 권장: 세로 2:3 -->
         <figure class="work asym-side">
-          <div class="frame reveal-img"><img src="images/photo10.webp" alt="Film — rain on a window, city lights blurred behind it" width="1200" height="1800" loading="lazy" decoding="async"></div>
-          <figcaption class="label"><span class="label-title">Rain</span><span>Nikon F4</span><span>CineStill 800T</span><span>Seoul, 2025</span></figcaption>
+          <div class="frame reveal-img"><img src="images/film/photo02.webp" alt="Film — rain on a window, city lights blurred behind it" width="1200" height="1800" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">On the Grass</span><span>Nikon F4</span><span>Vision3 250D</span><span>Chungju, 2026</span></figcaption>
+        </figure>
+      </div>
+
+      <!-- 세로 사진(왼쪽) + 가로 사진(오른쪽 아래)을 엇갈리게 놓은 한 세트 -->
+      <div class="layout-asym layout-asym--flip wrap">
+        <!-- 📷 film/photo07.webp | FILM 추가 사진 · 왼쪽 세로 사진 (On the Grass 바로 다음) | 권장: 세로 2:3
+             ※ 이미 정해 둔 photo03~06 이름이 바뀌지 않도록 새 사진은 photo07 로 이름 붙였습니다. 화면에서는 이 자리에 나옵니다. -->
+        <figure class="work asym-side">
+          <div class="frame reveal-img"><img src="images/film/photo07.webp" alt="Film — photograph" width="1989" height="3000" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">Serendipity in a Flash</span><span>Kodak Ultra F9</span><span>Vision3 500T</span><span>2025</span></figcaption>
+        </figure>
+        <!-- 📷 film/photo03.webp | FILM 4번째 · 오른쪽 아래 가로 사진 | 권장: 가로 3:2 -->
+        <figure class="work asym-main">
+          <div class="frame reveal-img"><img src="images/film/photo03.webp" alt="Film — photograph 4" width="2400" height="1600" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">A Seaside Escape</span><span>Mamiya RB67</span><span>CineStill 400D</span><span>Busan, 2026</span></figcaption>
         </figure>
       </div>
 
@@ -233,11 +277,40 @@
         <p class="reveal">Developing film is<br><em>the slowest way to remember.</em></p>
       </blockquote>
 
-      <!-- 📷 photo11.webp | FILM 화면 가득 (스크롤하면 천천히 확대) | 권장: 와이드 16:9 -->
-      <figure class="work layout-full">
-        <div class="frame zoom-on-scroll"><img src="images/photo11.webp" alt="Film — the Han River at dusk, the city reflected in the water" width="2400" height="1350" loading="lazy" decoding="async"></div>
-        <figcaption class="label wrap"><span class="label-title">Han River, 5:58 PM</span><span>Nikon F4</span><span>Portra 800</span><span>Seoul, 2026</span></figcaption>
+      <!-- 📷 film/photo04.webp | FILM 파노라마 (현상된 사진) | 권장: 파노라마 약 3:1, 긴 변 3600px
+           📷 film/photo04-nt.webp | 같은 사진의 네거티브 필름 — 반드시 photo04.webp 와 같은 크기·비율로.
+           이 자리에서 화면에 고정된 채, 스크롤하면 네거티브(위) → 현상된 사진(아래)으로 서서히 바뀌고(+ 살짝 확대),
+           다 바뀐 뒤 잠깐 머물렀다가 지나갑니다. -nt 파일이 없으면 그냥 현상된 사진만 보입니다. -->
+      <figure class="work layout-full layout-panorama">
+        <div class="pano-pin negative-fade">
+          <div class="pano-sticky">
+            <div class="frame">
+              <div class="pano-zoom">
+                <img src="images/film/photo04.webp" alt="Film — the Han River at dusk, the city reflected in the water" width="3600" height="1200" loading="lazy" decoding="async">
+                <img src="images/film/photo04-nt.webp" alt="" aria-hidden="true" data-negative data-optional width="3600" height="1200" loading="lazy" decoding="async">
+              </div>
+            </div>
+            <figcaption class="label wrap"><span class="label-title">0.5s Handheld Panorama</span><span>Mamiya RB67</span><span>CineStill 800T</span><span>Seoul, 2026</span></figcaption>
+          </div>
+        </div>
       </figure>
+
+      <div class="layout-pair wrap">
+        <!-- 📷 film/photo05.webp | FILM 두 장 구성 (왼쪽) | 권장: 세로 4:5 -->
+        <figure class="work pair-a">
+          <div class="frame reveal-img">
+            <img src="images/film/photo05.webp" alt="Film — photograph 5" width="1600" height="2000" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="label"><span class="label-title">Scooping Up the Sea</span><span>Canon QL17 G3</span><span>Gold 200</span><span>Danang, 2025</span></figcaption>
+        </figure>
+        <!-- 📷 film/photo06.webp | FILM 두 장 구성 (오른쪽, 아래로 엇갈림) | 권장: 세로 4:5 -->
+        <figure class="work pair-b">
+          <div class="frame reveal-img">
+            <img src="images/film/photo06.webp" alt="Film — photograph 6" width="1600" height="2000" loading="lazy" decoding="async">
+          </div>
+          <figcaption class="label"><span class="label-title">The Christmas Tree</span><span>Canon QL17 G3</span><span>CineStill 800T</span><span>Seoul, 2025</span></figcaption>
+        </figure>
+      </div>
     </section>
 
     <!-- ═════ ROOM 04 — PORTRAIT : 세로 시퀀스 (왼쪽 제목이 따라 내려옴) ═════ -->
@@ -249,20 +322,40 @@
           <p class="room-text reveal" style="--d:.15s">A portrait is an agreement: you let me look, and I try to see.</p>
         </header>
         <div class="vseq-list">
-          <!-- 📷 photo12.webp | PORTRAIT 대표 사진 (가장 큼) | 권장: 세로 2:3 -->
+          <!-- 📷 portrait/photo01.webp | PORTRAIT 대표 사진 (가장 큼) | 권장: 세로 2:3 -->
           <figure class="work">
-            <div class="frame reveal-img"><img src="images/photo12.webp" alt="Portrait — J., looking straight into the lens" width="1600" height="2400" loading="lazy" decoding="async"></div>
-            <figcaption class="label"><span class="label-title">J.</span><span>Nikon F4</span><span>Portra 400</span><span>Seoul, 2026</span></figcaption>
+            <div class="frame reveal-img"><img src="images/portrait/photo01.webp" alt="Portrait — J., looking straight into the lens" width="1600" height="2400" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">@Lee</span><span>Mamiya RB67</span><span>Portra 160</span><span>2026</span></figcaption>
           </figure>
-          <!-- 📷 photo13.webp | PORTRAIT 2번째 | 권장: 세로 4:5 -->
+          <!-- 📷 portrait/photo02.webp | PORTRAIT 2번째 | 권장: 세로 4:5 -->
           <figure class="work">
-            <div class="frame reveal-img"><img src="images/photo13.webp" alt="Portrait — M. after school, leaning against a wall" width="1600" height="2000" loading="lazy" decoding="async"></div>
-            <figcaption class="label"><span class="label-title">M., After School</span><span>Nikon F4</span><span>Portra 160</span><span>Seoul, 2026</span></figcaption>
+            <div class="frame reveal-img"><img src="images/portrait/photo02.webp" alt="Portrait — M. after school, leaning against a wall" width="1600" height="2000" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">@inchan</span><span>Mamiya RB67</span><span>Gold 200</span><span>2026</span></figcaption>
           </figure>
-          <!-- 📷 photo14.webp | PORTRAIT 3번째 | 권장: 세로 2:3 -->
+          <!-- 📷 portrait/photo03.webp | PORTRAIT 3번째 | 권장: 세로 2:3 -->
           <figure class="work">
-            <div class="frame reveal-img"><img src="images/photo14.webp" alt="Portrait — a self-portrait reflected in a shop window" width="1600" height="2400" loading="lazy" decoding="async"></div>
-            <figcaption class="label"><span class="label-title">Self-portrait, Reflection</span><span>Nikon F4</span><span>HP5 Plus</span><span>2026</span></figcaption>
+            <div class="frame reveal-img"><img src="images/portrait/photo03.webp" alt="Portrait — a self-portrait reflected in a shop window" width="1600" height="2400" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">@hh3onn</span><span>Nikon F4</span><span>Portra 160</span><span>2026</span></figcaption>
+          </figure>
+          <!-- 📷 portrait/photo04.webp | PORTRAIT 4번째 | 권장: 세로 2:3 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/portrait/photo04.webp" alt="Portrait — photograph 4" width="1600" height="2400" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">Nam.1</span><span>Nikon F4</span><span>Ektar 100</span><span>2026</span></figcaption>
+          </figure>
+          <!-- 📷 portrait/photo05.webp | PORTRAIT 5번째 | 권장: 세로 4:5 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/portrait/photo05.webp" alt="Portrait — photograph 5" width="1600" height="2000" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">Nam.2</span><span>Nikon F4</span><span>Ektar 100</span><span>2026</span></figcaption>
+          </figure>
+          <!-- 📷 portrait/photo06.webp | PORTRAIT 6번째 | 권장: 세로 2:3 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/portrait/photo06.webp" alt="Portrait — photograph 6" width="1600" height="2400" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">@Leee</span><span>Nikon F4</span><span>Vision3 500T</span><span>2026</span></figcaption>
+          </figure>
+          <!-- 📷 portrait/photo07.webp | PORTRAIT 7번째 | 권장: 세로 4:5 -->
+          <figure class="work">
+            <div class="frame reveal-img"><img src="images/portrait/photo07.webp" alt="Portrait — photograph 7" width="1600" height="2000" loading="lazy" decoding="async"></div>
+            <figcaption class="label"><span class="label-title">@Leeee</span><span>Nikon F4</span><span>Vision3 500T</span><span>2026</span></figcaption>
           </figure>
         </div>
       </div>
@@ -273,156 +366,50 @@
       <header class="room-head wrap">
         <p class="room-num reveal">05 —</p>
         <h2 class="room-title reveal" id="room-experimental-title">EXPERIMENTAL</h2>
-        <p class="room-text reveal" style="--d:.15s">Double exposures, long shutters, light leaks — and the mistakes I decided to keep.</p>
+        <p class="room-text reveal" style="--d:.15s">Long exposures, shutters left open on purpose&nbsp;— letting the light draw its own lines.</p>
       </header>
 
-      <!-- 📷 photo15.webp | EXPERIMENTAL 대표 사진 · 작은 액자에서 화면 전체로 커짐 | 권장: 가로 3:2 -->
+      <!-- 📷 experimental/photo01.webp | EXPERIMENTAL 대표 사진 · 작은 액자에서 화면 전체로 커짐 | 권장: 가로 3:2 -->
       <figure class="work">
         <div class="expand" data-expand>
           <div class="expand-sticky">
             <div class="expand-frame">
-              <img src="images/photo15.webp" alt="Experimental — a double exposure of a face and city lights" width="2400" height="1600" loading="lazy" decoding="async">
+              <img src="images/experimental/photo01.webp" alt="Experimental — a double exposure of a face and city lights" width="2400" height="1600" loading="lazy" decoding="async">
             </div>
           </div>
         </div>
-        <figcaption class="label wrap"><span class="label-title">Double Exposure No. 3</span><span>Nikon F4</span><span>Ektar 100</span><span>Seoul, 2026</span></figcaption>
+        <figcaption class="label wrap"><span class="label-title">Handheld Long-Exposure Legend Fireworks</span><span>Mamiya RB67</span><span>Portra 400</span><span>Busan, 2026</span></figcaption>
       </figure>
 
-      <!-- 📷 photo16.webp | EXPERIMENTAL 마지막 사진 · 가운데 | 권장: 정사각형 1:1 -->
+      <!-- 📷 experimental/photo02.webp | EXPERIMENTAL 두 번째 사진 · 가운데 | 권장: 정사각형 1:1 -->
       <figure class="work layout-center layout-center--small wrap">
-        <div class="frame reveal-img"><img src="images/photo16.webp" alt="Experimental — a long exposure turning passing cars into lines of light" width="2000" height="2000" loading="lazy" decoding="async"></div>
-        <figcaption class="label"><span class="label-title">Long Exposure, Untitled</span><span>Sony α7 IV</span><span>30 sec.</span><span>2026</span></figcaption>
+        <div class="frame reveal-img"><img src="images/experimental/photo02.webp" alt="Experimental — a long exposure turning passing cars into lines of light" width="2000" height="2000" loading="lazy" decoding="async"></div>
+        <figcaption class="label"><span class="label-title">Colors</span><span>Canon QL17 G3</span><span>Vision3 250D</span><span>2026</span></figcaption>
+      </figure>
+
+      <div class="layout-asym wrap">
+        <!-- 📷 experimental/photo03.webp | EXPERIMENTAL 3번째 · 왼쪽에 크게 | 권장: 가로 3:2 -->
+        <figure class="work asym-main">
+          <div class="frame reveal-img"><img src="images/experimental/photo03.webp" alt="Experimental — photograph 3" width="2400" height="1600" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">At the Airport</span><span>Canon QL17 G3</span><span>Ektar 100</span><span>Singapore, 2026</span></figcaption>
+        </figure>
+        <!-- 📷 experimental/photo04.webp | EXPERIMENTAL 4번째 · 작은 세로 사진 · 오른쪽 아래 | 권장: 세로 2:3 -->
+        <figure class="work asym-side">
+          <div class="frame reveal-img"><img src="images/experimental/photo04.webp" alt="Experimental — photograph 4" width="1200" height="1800" loading="lazy" decoding="async"></div>
+          <figcaption class="label"><span class="label-title">Riding a Motorcycle...</span><span>Canon QL17 G3</span><span>Double X</span><span>Seoul, 2026</span></figcaption>
+        </figure>
+      </div>
+
+      <!-- 📷 experimental/photo05.webp | EXPERIMENTAL 마지막 사진 · 화면 가득 (스크롤하면 천천히 확대) | 권장: 와이드 16:9 -->
+      <figure class="work layout-full">
+        <div class="frame zoom-on-scroll"><img src="images/experimental/photo05.webp" alt="Experimental — photograph 5" width="2400" height="1350" loading="lazy" decoding="async"></div>
+        <figcaption class="label wrap"><span class="label-title">A Memory of Her</span><span>Nikon Zf</span><span>2026</span></figcaption>
       </figure>
 
       <div class="exhibition-end wrap">
         <p class="eyebrow reveal">End of exhibition</p>
         <p class="end-line reveal" style="--d:.12s"><em>Thank you for looking.</em></p>
       </div>
-    </section>
-
-    <!-- ═════ PROJECTS ═════ (새 프로젝트 추가: 맨 아래 템플릿 참고) -->
-    <section class="projects" id="projects" data-theme="light" aria-labelledby="projects-title">
-      <header class="section-head wrap">
-        <p class="eyebrow reveal">Projects</p>
-        <h2 class="display reveal" id="projects-title">Beyond<br><em>the single frame.</em></h2>
-        <p class="section-lede reveal" style="--d:.12s">Series, films and videos — work that needs more than one picture to be told.</p>
-      </header>
-
-      <!-- ── PROJECT 01 : THE MOSA (사진 프로젝트) ── -->
-      <article class="project wrap" aria-labelledby="p01-title">
-        <div class="project-meta">
-          <p class="project-num reveal">P — 01</p>
-          <h3 class="project-title reveal" id="p01-title">THE MOSA</h3>
-          <dl class="project-facts reveal">
-            <div><dt>Type</dt><dd>Photo series</dd></div>
-            <div><dt>Year</dt><dd>2026</dd></div>
-            <div><dt>Role</dt><dd>Photography</dd></div>
-          </dl>
-          <!-- ✏️ 실제 설명으로 바꾸세요 -->
-          <p class="project-desc reveal">A photographic record of one community — the people, the rooms we shared, and the small rituals that made us who we were.</p>
-        </div>
-        <div class="project-media">
-          <!-- 📷 project-mosa.webp | 대표 이미지 | 권장: 가로 3:2 -->
-          <figure class="project-cover">
-            <div class="frame reveal-img"><img src="images/project-mosa.webp" alt="THE MOSA — cover photograph" width="2400" height="1600" loading="lazy" decoding="async"></div>
-          </figure>
-          <div class="project-gallery">
-            <!-- 📷 project-mosa-2.webp | 추가 사진 1 | 권장: 세로 4:5 -->
-            <figure class="work">
-              <div class="frame reveal-img"><img src="images/project-mosa-2.webp" alt="THE MOSA — photograph 2" width="1600" height="2000" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">THE MOSA, No. 2</span><span>2026</span></figcaption>
-            </figure>
-            <!-- 📷 project-mosa-3.webp | 추가 사진 2 | 권장: 세로 4:5 -->
-            <figure class="work">
-              <div class="frame reveal-img"><img src="images/project-mosa-3.webp" alt="THE MOSA — photograph 3" width="1600" height="2000" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">THE MOSA, No. 3</span><span>2026</span></figcaption>
-            </figure>
-          </div>
-        </div>
-      </article>
-
-      <!-- ── PROJECT 02 : KU데타 (영상 프로젝트) ── -->
-      <article class="project project--video wrap" aria-labelledby="p02-title">
-        <div class="project-meta">
-          <p class="project-num reveal">P — 02</p>
-          <h3 class="project-title reveal" id="p02-title" lang="ko">KU데타</h3>
-          <dl class="project-facts reveal">
-            <div><dt>Type</dt><dd>Short film</dd></div>
-            <div><dt>Year</dt><dd>2026</dd></div>
-            <div><dt>Role</dt><dd>Director, Editor</dd></div>
-          </dl>
-          <!-- ✏️ 실제 설명으로 바꾸세요 -->
-          <p class="project-desc reveal">A short film made with friends over one season. Small crew, borrowed lights, real locations.</p>
-        </div>
-        <div class="project-media">
-          <!-- 🎬 project-kudeta.webp | 영상 대표 이미지 | 권장: 시네마 비율 2.39:1
-               ▶ href="..." 를 내 YouTube/Vimeo 영상 주소로 바꾸세요 -->
-          <figure class="project-cover video-cover">
-            <a class="video-link" href="https://www.youtube.com/" target="_blank" rel="noopener">
-              <span class="frame reveal-img"><img src="images/project-kudeta.webp" alt="KU데타 — film still used as the cover" width="2390" height="1000" loading="lazy" decoding="async"></span>
-              <span class="play"><span class="play-icon" aria-hidden="true"></span>Watch the film<span class="visually-hidden"> (opens in a new tab)</span></span>
-            </a>
-            <!-- (선택) 영상 파일을 직접 넣으려면 videos 폴더에 kudeta.mp4 를 넣고,
-                 위의 <a class="video-link">…</a> 를 지운 뒤 아래 줄을 주석 밖으로 꺼내세요.
-            <video class="video-file" controls preload="none" poster="images/project-kudeta.webp" src="videos/kudeta.mp4"></video>
-            -->
-          </figure>
-          <div class="project-stills">
-            <!-- 📷 project-kudeta-2.webp | 스틸컷 1 | 권장: 16:9 -->
-            <figure class="work">
-              <div class="frame reveal-img"><img src="images/project-kudeta-2.webp" alt="KU데타 — film still 1" width="1920" height="1080" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Still, 00:03:12</span></figcaption>
-            </figure>
-            <!-- 📷 project-kudeta-3.webp | 스틸컷 2 | 권장: 16:9 -->
-            <figure class="work">
-              <div class="frame reveal-img"><img src="images/project-kudeta-3.webp" alt="KU데타 — film still 2" width="1920" height="1080" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Still, 00:11:48</span></figcaption>
-            </figure>
-          </div>
-        </div>
-      </article>
-
-      <!-- ── PROJECT 03 : 쿠왕 (영상 프로젝트) ── -->
-      <article class="project project--video wrap" aria-labelledby="p03-title">
-        <div class="project-meta">
-          <p class="project-num reveal">P — 03</p>
-          <h3 class="project-title reveal" id="p03-title" lang="ko">쿠왕</h3>
-          <dl class="project-facts reveal">
-            <div><dt>Type</dt><dd>Video series</dd></div>
-            <div><dt>Year</dt><dd>2025 — 2026</dd></div>
-            <div><dt>Role</dt><dd>Directing, Camera, Edit</dd></div>
-          </dl>
-          <!-- ✏️ 실제 설명으로 바꾸세요 -->
-          <p class="project-desc reveal">An ongoing video series built from everyday campus life — people, places and the rhythm in between.</p>
-        </div>
-        <div class="project-media">
-          <!-- 🎬 project-kuwang.webp | 영상 대표 이미지 | 권장: 16:9 · ▶ href 를 내 영상 주소로 -->
-          <figure class="project-cover video-cover">
-            <a class="video-link" href="https://www.youtube.com/" target="_blank" rel="noopener">
-              <span class="frame reveal-img"><img src="images/project-kuwang.webp" alt="쿠왕 — video cover still" width="2400" height="1350" loading="lazy" decoding="async"></span>
-              <span class="play"><span class="play-icon" aria-hidden="true"></span>Watch the video<span class="visually-hidden"> (opens in a new tab)</span></span>
-            </a>
-          </figure>
-          <div class="project-stills">
-            <!-- 📷 project-kuwang-2.webp | 스틸컷 1 | 권장: 16:9 -->
-            <figure class="work">
-              <div class="frame reveal-img"><img src="images/project-kuwang-2.webp" alt="쿠왕 — video still 1" width="1920" height="1080" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Episode 01</span></figcaption>
-            </figure>
-            <!-- 📷 project-kuwang-3.webp | 스틸컷 2 | 권장: 16:9 -->
-            <figure class="work">
-              <div class="frame reveal-img"><img src="images/project-kuwang-3.webp" alt="쿠왕 — video still 2" width="1920" height="1080" loading="lazy" decoding="async"></div>
-              <figcaption class="label"><span class="label-title">Episode 02</span></figcaption>
-            </figure>
-          </div>
-        </div>
-      </article>
-
-      <!-- ✚ 새 프로젝트 추가 방법
-           사진 프로젝트는 위의 THE MOSA <article> … </article> 전체를 복사해서
-           쿠왕 </article> 바로 아래에 붙여넣으세요. (영상 프로젝트는 KU데타 블록을 복사)
-           그다음 P — 04, 제목, 설명, id="p04-title"(위의 aria-labelledby도 같이),
-           사진 이름(project-new.webp 등)을 바꾸고 images 폴더에 사진을 넣으면 됩니다. -->
     </section>
 
     <!-- ═════ ABOUT ═════ -->
@@ -476,7 +463,7 @@
   <dialog class="viewer" id="viewer" aria-label="Photo viewer">
     <button class="viewer-close" type="button">Close <span aria-hidden="true">✕</span></button>
     <figure class="viewer-figure">
-      <img class="viewer-img" src="" alt="">
+      <img class="viewer-img" alt="">
       <figcaption class="viewer-caption"></figcaption>
     </figure>
     <button class="viewer-nav viewer-prev" type="button" aria-label="Previous photograph">←</button>
