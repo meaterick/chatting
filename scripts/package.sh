@@ -18,6 +18,8 @@ cp -a .next/standalone/. "$STAGE/"
 mkdir -p "$STAGE/.next"
 cp -a .next/static "$STAGE/.next/static"
 cp -a public "$STAGE/public"
+# 이미지 주소에 내용 해시(?v=)를 붙여, 같은 파일명으로 교체해도 30일 캐시된 옛 사진이 남지 않게 한다
+node scripts/version-assets.mjs "$STAGE/public"
 cp ecosystem.config.js scripts/deploy.sh deploy/Caddyfile \
   deploy/caddy-cert-retry.sh deploy/caddy-cert-retry.service "$STAGE/"
 
