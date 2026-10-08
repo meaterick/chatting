@@ -6,7 +6,8 @@ const nextConfig = {
   async rewrites() {
     return [{ source: "/", destination: "/index.html" }];
   },
-  // 사진은 30일간 브라우저 캐시. 사진을 교체할 때는 파일명을 바꿔야 바로 반영된다.
+  // 사진은 30일간 브라우저 캐시. 같은 파일명으로 교체해도 되도록 scripts/package.sh 가
+  // 번들에 들어가는 HTML/CSS/JS 의 images/* 주소에 내용 해시(?v=...)를 붙인다.
   async headers() {
     return [
       {
