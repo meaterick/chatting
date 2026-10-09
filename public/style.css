@@ -311,7 +311,7 @@ img { -webkit-touch-callout: none; }   /* 휴대폰: 사진 길게 눌러 저장
 /* ---------- 13. 사진 크게 보기 ---------- */
 .viewer { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: #f2f1ed; overflow: hidden; }
 .viewer::backdrop { background: transparent; }
-.viewer[open] { display: grid; place-items: center; }
+.viewer[open] { display: grid; place-items: start center; }   /* 위쪽 기준 고정: 캡션 줄 수가 달라도 사진이 위아래로 튀지 않음 */
 /* 검은 배경은 따로 서서히 (사진은 페이지 속 제자리에서 떠올라 가운데로 이동) */
 .viewer::before { content: ""; position: fixed; inset: 0; z-index: 0; background: #0a0a0a; transition: opacity .48s cubic-bezier(.4, 0, .6, 1); }
 .viewer[open]::before { animation: fade .5s var(--ease-soft); }
@@ -324,7 +324,7 @@ img { -webkit-touch-callout: none; }   /* 휴대폰: 사진 길게 눌러 저장
 .page-veil.is-on { opacity: 1; }
 .page-veil.is-out { transition: opacity .7s var(--ease-soft); }
 .viewer-figure { display: flex; flex-direction: column; align-items: center; width: 100%; padding: 72px 72px 56px; max-width: 100%; }
-.viewer-img { display: block; width: 100%; height: calc(100vh - 180px); height: calc(100dvh - 180px); object-fit: contain; will-change: transform, opacity; }   /* 자리 고정 → 사진마다 위치가 안 바뀜 */
+.viewer-img { display: block; width: 100%; height: calc(100vh - 180px); height: calc(100dvh - 180px); object-fit: contain; will-change: transform, opacity; pointer-events: none; -webkit-user-drag: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }   /* 원본 사진은 직접 잡을 수 없음 (움직이는 중에도) */   /* 자리 고정 → 사진마다 위치가 안 바뀜 */
 .viewer-caption { margin-top: 16px; padding-inline: 12px; font: 400 .6875rem/1.7 var(--mono); letter-spacing: .08em; color: #9b9a96; text-align: center; text-wrap: balance; }
 .viewer-caption .vc-title { display: block; margin-bottom: 2px; font: italic 400 1rem/1.4 var(--serif); letter-spacing: 0; color: #f2f1ed; }
 .viewer-caption .vc-item { white-space: nowrap; }

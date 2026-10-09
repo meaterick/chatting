@@ -142,7 +142,7 @@
   import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
   /* 전시 사진 목록 (index.html 의 사진·캡션에서 만든 것). 텍스처는 images/gallery/ 의 sRGB 사본 */
-  const WORKS = [{"room":"01 — People","tex":"images/gallery/people/photo01.webp?v=cfae80f0","ar":0.663,"cap":["Passing By","Canon QL17 G3","Ektar 100","Singapore, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo02.webp?v=ddddd995","ar":0.8001,"cap":["Looking for a Four-Leaf Clover","Canon QL17 G3","vision3 500T","Seoul, 2025"]},{"room":"01 — People","tex":"images/gallery/people/photo03.webp?v=6c77f4ad","ar":0.8002,"cap":["Waiting","Canon QL17 G3","Ektar 100","Singapore, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo04.webp?v=f9f69998","ar":1.5083,"cap":["Photographing in Dongmyo","Nikon F4","Lomography 100","Seoul, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo05.webp?v=ed5e1667","ar":0.6723,"cap":["On the Tube","Nikon F4","Lomography 100","Busan, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo06.webp?v=d96dc4a0","ar":0.663,"cap":["Walking Along","Nikon F4","CineStill 800T","Seoul, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo01.webp?v=cefa90ef","ar":1.5083,"cap":["Out of Bed","Canon QL17 G3","Vision3 500T","Incheon, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo02.webp?v=06b88d2e","ar":0.6747,"cap":["In Passing","Nikon F4","Ektar 100","Busan, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo03.webp?v=e4ff54f6","ar":0.8157,"cap":["Afternoon by the Sea","Mamiya RB67","CineStill 400D","Busan, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo04.webp?v=6e31003f","ar":0.8,"cap":["A Cozy Read","Canon QL17 G3","CineStill 800T","Seoul, 2025"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo05.webp?v=c614e5ae","ar":0.663,"cap":["Order in the Streets","Canon QL17 G3","Double X","Seoul, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo06.webp?v=841104dc","ar":1.5083,"cap":["The Throw","Nikon F4","CineStill 800T","Seoul, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo01.webp?v=9b74fcf5","ar":1.5083,"cap":["Serendipity","Canon QL17 G3","Vision3 250D","Seoul, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo02.webp?v=53db20ea","ar":0.6633,"cap":["On the Grass","Nikon F4","Vision3 250D","Chungju, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo07.webp?v=88e097a7","ar":0.663,"cap":["Serendipity in a Flash","Kodak Ultra F9","Vision3 500T","2025"]},{"room":"03 — Film","tex":"images/gallery/film/photo03.webp?v=2e5f1181","ar":1.2255,"cap":["A Seaside Escape","Mamiya RB67","CineStill 400D","Busan, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo04.webp?v=96b5269a","ar":1.9621,"cap":["0.5s Handheld Panorama","Mamiya RB67","CineStill 800T","Seoul, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo05.webp?v=923e75e9","ar":1.5005,"cap":["Scooping Up the Sea","Canon QL17 G3","Gold 200","Danang, 2025"]},{"room":"03 — Film","tex":"images/gallery/film/photo06.webp?v=3dc4fc6d","ar":0.8,"cap":["The Christmas Tree","Canon QL17 G3","CineStill 800T","Seoul, 2025"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo01.webp?v=48b45591","ar":0.8157,"cap":["@Lee","Mamiya RB67","Portra 160","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo02.webp?v=3bc89866","ar":0.8597,"cap":["@inchan","Mamiya RB67","Gold 200","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo03.webp?v=0e8fa041","ar":0.663,"cap":["@hh3onn","Nikon F4","Portra 160","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo04.webp?v=653b6101","ar":0.6727,"cap":["Nam.1","Nikon F4","Ektar 100","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo05.webp?v=33609a34","ar":0.674,"cap":["Nam.2","Nikon F4","Ektar 100","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo06.webp?v=075f0b7d","ar":1.4881,"cap":["@Leee","Nikon F4","Vision3 500T","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo07.webp?v=8d859fe4","ar":0.677,"cap":["@Leeee","Nikon F4","Vision3 500T","2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo01.webp?v=5d91cbfe","ar":1.3333,"cap":["Handheld Long-Exposure Legend Fireworks","Mamiya RB67","Portra 400","Busan, 2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo02.webp?v=7389d705","ar":0.8001,"cap":["Colors","Canon QL17 G3","Vision3 250D","2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo03.webp?v=f2ae9ea8","ar":0.663,"cap":["At the Airport","Canon QL17 G3","Ektar 100","Singapore, 2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo04.webp?v=c50b4161","ar":0.8001,"cap":["Riding a Motorcycle...","Canon QL17 G3","Double X","Seoul, 2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo05.webp?v=93f41d88","ar":0.6667,"cap":["A Memory of Her","Nikon Zf","2026"]}];
+  const WORKS = [{"room":"01 — People","tex":"images/gallery/people/photo01.webp?v=cfae80f0","ar":0.663,"cap":["Passing By","Canon QL17 G3","Ektar 100","Singapore, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo02.webp?v=ddddd995","ar":0.8001,"cap":["Looking for a Four-Leaf Clover","Canon QL17 G3","Vision3 500T","Seoul, 2025"]},{"room":"01 — People","tex":"images/gallery/people/photo03.webp?v=6c77f4ad","ar":0.8002,"cap":["Waiting","Canon QL17 G3","Ektar 100","Singapore, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo04.webp?v=f9f69998","ar":1.5083,"cap":["Photographing in Dongmyo","Nikon F4","Lomography 100","Seoul, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo05.webp?v=ed5e1667","ar":0.6723,"cap":["On the Tube","Nikon F4","Lomography 100","Busan, 2026"]},{"room":"01 — People","tex":"images/gallery/people/photo06.webp?v=d96dc4a0","ar":0.663,"cap":["Walking Along","Nikon F4","CineStill 800T","Seoul, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo01.webp?v=cefa90ef","ar":1.5083,"cap":["Out of Bed","Canon QL17 G3","Vision3 500T","Incheon, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo02.webp?v=06b88d2e","ar":0.6747,"cap":["In Passing","Nikon F4","Ektar 100","Busan, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo03.webp?v=e4ff54f6","ar":0.8157,"cap":["Afternoon by the Sea","Mamiya RB67","CineStill 400D","Busan, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo04.webp?v=6e31003f","ar":0.8,"cap":["A Cozy Read","Canon QL17 G3","CineStill 800T","Seoul, 2025"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo05.webp?v=c614e5ae","ar":0.663,"cap":["Order in the Streets","Canon QL17 G3","Double X","Seoul, 2026"]},{"room":"02 — Daily","tex":"images/gallery/daily/photo06.webp?v=841104dc","ar":1.5083,"cap":["The Throw","Nikon F4","CineStill 800T","Seoul, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo01.webp?v=9b74fcf5","ar":1.5083,"cap":["Serendipity","Canon QL17 G3","Vision3 250D","Seoul, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo02.webp?v=53db20ea","ar":0.6633,"cap":["On the Grass","Nikon F4","Vision3 250D","Chungju, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo07.webp?v=88e097a7","ar":0.663,"cap":["Serendipity in a Flash","Kodak Ultra F9","Vision3 500T","2025"]},{"room":"03 — Film","tex":"images/gallery/film/photo03.webp?v=2e5f1181","ar":1.2255,"cap":["A Seaside Escape","Mamiya RB67","CineStill 400D","Busan, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo04.webp?v=96b5269a","ar":1.9621,"cap":["0.5s Handheld Panorama","Mamiya RB67","CineStill 800T","Seoul, 2026"]},{"room":"03 — Film","tex":"images/gallery/film/photo05.webp?v=923e75e9","ar":1.5005,"cap":["Scooping Up the Sea","Canon QL17 G3","Gold 200","Danang, 2025"]},{"room":"03 — Film","tex":"images/gallery/film/photo06.webp?v=3dc4fc6d","ar":0.8,"cap":["The Christmas Tree","Canon QL17 G3","CineStill 800T","Seoul, 2025"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo01.webp?v=48b45591","ar":0.8157,"cap":["@Lee","Mamiya RB67","Portra 160","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo02.webp?v=3bc89866","ar":0.8597,"cap":["@inchan","Mamiya RB67","Gold 200","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo03.webp?v=0e8fa041","ar":0.663,"cap":["@hh3onn","Nikon F4","Portra 160","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo04.webp?v=653b6101","ar":0.6727,"cap":["Nam.1","Nikon F4","Ektar 100","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo05.webp?v=33609a34","ar":0.674,"cap":["Nam.2","Nikon F4","Ektar 100","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo06.webp?v=075f0b7d","ar":1.4881,"cap":["@Leee","Nikon F4","Vision3 500T","2026"]},{"room":"04 — Portrait","tex":"images/gallery/portrait/photo07.webp?v=8d859fe4","ar":0.677,"cap":["@Leeee","Nikon F4","Vision3 500T","2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo01.webp?v=5d91cbfe","ar":1.3333,"cap":["Handheld Long-Exposure Legend Fireworks","Mamiya RB67","Portra 400","Busan, 2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo02.webp?v=7389d705","ar":0.8001,"cap":["Colors","Canon QL17 G3","Vision3 250D","2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo03.webp?v=f2ae9ea8","ar":0.663,"cap":["At the Airport","Canon QL17 G3","Ektar 100","Singapore, 2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo04.webp?v=c50b4161","ar":0.8001,"cap":["Riding a Motorcycle...","Canon QL17 G3","Double X","Seoul, 2026"]},{"room":"05 — Experimental","tex":"images/gallery/experimental/photo05.webp?v=93f41d88","ar":0.6667,"cap":["A Memory of Her","Nikon Zf","2026"]}];
   const ROOM_TEXT = {"people": "Strangers who looked back. Friends who didn't notice. Every face carries a weather of its own.", "daily": "Nothing happens here — a hotel bed, a beach at dusk, a page turned, a throw across the grass. That is exactly why I keep them.", "film": "Thirty-six frames. No preview. Film taught me to wait for a moment instead of chasing it.", "portrait": "A portrait is an agreement: you let me look, and I try to see.", "experimental": "Long exposures, shutters left open on purpose — letting the light draw its own lines."};
 
   const $ = (id) => document.getElementById(id);
@@ -355,6 +355,14 @@
 
   /* ---------- 방 짓기 ---------- */
   const obstacles = [];                                     // 걸을 때 피해 가는 것 (소파·칸막이)
+  const segs = [];                                          // 자유 이동(WASD)용 충돌 선: 벽·가벽·펜스·소파 둘레 (위에서 본 2D)
+  const seg = (ax, az, bx, bz) => segs.push([ax, az, bx, bz]);
+  function rectSegs(cx, cz, w, d, ry) {                    // 회전된 직사각형 둘레
+    const c = Math.cos(ry || 0), s = Math.sin(ry || 0);
+    const P = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([x, z]) => [cx + x * c + z * s, cz - x * s + z * c]);
+    for (let i = 0; i < 4; i++) seg(P[i][0], P[i][1], P[(i + 1) % 4][0], P[(i + 1) % 4][1]);
+  }
+  function chainSegs(pts) { for (let i = 0; i < pts.length - 1; i++) seg(pts[i][0], pts[i][1], pts[i + 1][0], pts[i + 1][1]); }
   function wallRun(r, side, from, to, mat, y0, y1) {
     const len = Math.abs(to - from); if (len < 0.01) return;
     const mid = (from + to) / 2, line = lineOf(r, side), [nx, nz] = NORMAL[side], y = (y0 + y1) / 2, off = -WALL_T / 2;
@@ -382,7 +390,19 @@
       default: return surf(th.floor, { map: tex('concfloor', R, R, true), normalMap: tex('wall_n', R), normalScale: NS(0.5), roughnessMap: tex('concfloor_r', R), roughness: 0.9, envMapIntensity: 0.6 });
     }
   }
+  function roomSegs(r) {                                    // 방 벽 안쪽 면 (문 자리는 비우고 문틀 두께만)
+    SIDES.forEach((side) => {
+      const L = lineOf(r, side), ax = isX(side), [nx, nz] = NORMAL[side], a0 = (ax ? r.cx : r.cz) - HALF, a1 = a0 + SIDE;
+      const P = (t, out) => (ax ? [t, L - nz * out] : [L - nx * out, t]);
+      const d = r.doors[side];
+      if (!d || d.to === 'site') { seg(...P(a0, 0), ...P(a1, 0)); return; }
+      const c = ax ? d.x : d.z, g0 = c - DOOR_W / 2, g1 = c + DOOR_W / 2;
+      seg(...P(a0, 0), ...P(g0, 0)); seg(...P(g1, 0), ...P(a1, 0));
+      seg(...P(g0, 0), ...P(g0, WALL_T)); seg(...P(g1, 0), ...P(g1, WALL_T));
+    });
+  }
   function buildRoom(r) {
+    roomSegs(r);
     const th = r.theme, wallMat = plasterMat(th.wall);
     SIDES.forEach((side) => {
       const c0 = (isX(side) ? r.cx : r.cz) - HALF - WALL_T, c1 = c0 + SIDE + WALL_T * 2;
@@ -465,7 +485,7 @@
     const hp = TW.h - 0.04;
     plane(TW.w - 0.04, hp, basic({ map: poolTex((TW.h - TW.py) / hp), transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, opacity: dark ? 0.8 : 0.9 }), fx - nx * 0.002, 0.02 + hp / 2, fz - nz * 0.002, ry);
     lampAt(cx - nx * 1.7, r.h, cz - nz * 1.7, new THREE.Vector3(fx, TW.py + 0.1, fz));
-    obstacles.push({ x: cx, z: cz, r: 1.85 });
+    obstacles.push({ x: cx, z: cz, r: 1.85 }); rectSegs(cx, cz, along ? TW.w : TW.t, along ? TW.t : TW.w, 0);
     r.title = { x: fx, z: fz, nx: -nx, nz: -nz };
   }
 
@@ -507,7 +527,7 @@
     const hit = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.85, 0.85), basic({ visible: false })); hit.position.y = 0.42; g.add(hit);   // 누르는 영역
     hit.userData.seat = seat; sofaParts.push(hit); sofaSeats.push(seat); sofaSlots.push(g);
     if (sofaModel) g.add(sofaModel.clone());
-    obstacles.push({ x, z, r: 1.9 });
+    obstacles.push({ x, z, r: 1.9 }); rectSegs(x, z, 2.2, 0.85, ry);
   }
   new GLTFLoader().load('images/gallery/models/sofa.glb?v=3b46016f', (gl) => {
     let mesh = null; gl.scene.traverse((o) => { if (o.isMesh && !mesh) mesh = o; });
@@ -535,6 +555,7 @@
     g.children.forEach((m) => { m.userData.seat = seat; sofaParts.push(m); });
     const ax = Math.cos(ry), az = -Math.sin(ry);
     [-1, 0, 1].forEach((k) => obstacles.push({ x: x + ax * k * (len / 2 - 0.35), z: z + az * k * (len / 2 - 0.35), r: 0.6 }));
+    rectSegs(x, z, len, 0.5, ry);
   }
 
   /* ---------- 로비: hero 사진 벽지 + 웹사이트 첫 화면 같은 입체 제목 ---------- */
@@ -558,7 +579,7 @@
   plane(5.6, 0.3, basic({ map: roles, transparent: true }), muralX + 0.02, 1.05, lobby.cz + 3.8, ryMural);
   new FontLoader().load('https://cdn.jsdelivr.net/npm/three@0.160.0/examples/fonts/helvetiker_bold.typeface.json', (font) => {
     const geo = new TextGeometry('DOSTER', { font, size: 1.55, height: 0.16, curveSegments: 6, bevelEnabled: true, bevelThickness: 0.015, bevelSize: 0.012, bevelSegments: 2 });
-    geo.computeBoundingBox(); const bb = geo.boundingBox, wTxt = bb.max.x - bb.min.x;
+    geo.computeBoundingBox();
     const txt = new THREE.Mesh(geo, surf(0xf4f2ee, { roughness: 0.55, envMapIntensity: 0.6 }));
     txt.rotation.y = ryMural; txt.position.set(muralX + 0.06, 1.45, lobby.cz + 6.6);   // 벽에서 살짝 띄운 입체 글자
     scene.add(txt);
@@ -603,7 +624,7 @@
       g.fillStyle = soft; g.font = `500 26px ${MONO}`; g.fillText('DOSTER (DOHYEON)  ·  INSTAGRAM @DOSTERVIBES', L, H - 34);
     });
     plane(ABOUT.textW, ABOUT.textH, basic({ map: tx, transparent: true }), ABOUT.textX, ABOUT.textY, zf, ry);
-    const pw = ABOUT.picW, ph = pw / 1.25, m = 0.1, fw = pw + 2 * (m + 0.035), fh = ph + 2 * (m + 0.035);
+    const pw = ABOUT.picW, ph = pw / 1.25, m = 0.1, fw = pw + 2 * (m + 0.035);
     const picMat = buildFrame(ABOUT.picX, ABOUT.z, 0, -1, ABOUT.picY, pw, ph, m, m, { white: true }).photoMat;
     picMat.transparent = false;
     new THREE.TextureLoader().load('images/gallery/about.webp?v=b16d0ea2', (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = ANISO; picMat.map = t; picMat.color.set(0xffffff); picMat.needsUpdate = true; dirty = true; });
@@ -633,6 +654,7 @@
   const part = { x0: film.cx - 7.0, x1: film.cx - 1.2, z: film.cz + 1.6, h: 3.6 };   // 입구 가벽 뒤쪽, 북쪽을 바라보는 벽
   box(part.x1 - part.x0, part.h, WALL_T, linenMat(film.theme.wall), (part.x0 + part.x1) / 2, part.h / 2, part.z, 0, true);
   box(part.x1 - part.x0 + 0.02, 0.012, WALL_T + 0.02, blackMat, (part.x0 + part.x1) / 2, part.h + 0.006, part.z);
+  rectSegs((part.x0 + part.x1) / 2, part.z, part.x1 - part.x0, WALL_T, 0);
   { const n = Math.ceil((part.x1 - part.x0) / 0.9) + 1; for (let k = 0; k < n; k++) obstacles.push({ x: part.x0 + 0.25 + ((part.x1 - part.x0 - 0.5) * k) / (n - 1), z: part.z, r: 0.85 }); }   // 칸막이 끝까지 빈틈 없이
 
   /* ---------- 사진 걸기: 문이 없는 벽에만, 걷는 순서대로 ---------- */
@@ -667,6 +689,7 @@
     lo = Math.max(lo, lim0); hi = Math.min(hi, lim1);
     const len = hi - lo, n = Math.max(2, Math.ceil(len / 1.7) + 1), mid = (lo + hi) / 2;
     for (let k = 0; k < n; k++) { const a = lo + (len * k) / (n - 1); posts.push(W.axis === 'x' ? [a, line] : [line, a]); }
+    if (W.axis === 'x') seg(lo, line, hi, line); else seg(line, lo, line, hi);
     const rx = W.axis === 'x' ? mid : line, rz = W.axis === 'x' ? line : mid;
     box(W.axis === 'x' ? len : 0.022, 0.022, W.axis === 'x' ? 0.022 : len, blackMat, rx, FENCE_H, rz);
     box(W.axis === 'x' ? len : 0.012, 0.012, W.axis === 'x' ? 0.012 : len, blackMat, rx, FENCE_H * 0.45, rz);
@@ -759,6 +782,10 @@
     // 휜 펜스 + 팻말
     const Rf = Rc - FENCE_D, aF = Math.min(aW - 0.05, aM + 0.12), nPost = Math.max(3, Math.ceil((2 * aF * Rf) / 1.6) + 1);
     for (let k = 0; k < nPost; k++) { const [lx, lz] = onArc(-aF + (2 * aF * k) / (nPost - 1), Rf); posts.push(toW(lx, lz)); }
+    { const arc = (R, a0, a1) => { const out = []; for (let k = 0; k <= 16; k++) { const [lx, lz] = onArc(a0 + ((a1 - a0) * k) / 16, R); out.push(toW(lx, lz)); } return out; };
+      chainSegs(arc(Rf, -aF, aF));                          // 휜 펜스
+      const front = arc(Rc, -aW, aW), back = arc(Rc + 0.14, -aW, aW);   // 휜 벽 앞·뒤·양 끝
+      chainSegs(front); chainSegs(back); seg(...front[0], ...back[0]); seg(...front[16], ...back[16]); }
     ring(Rf, 0.011, aF, FENCE_H, blackMat); ring(Rf, 0.006, aF, FENCE_H * 0.45, blackMat);
     { const aS = -(aF - 0.1), [lx, lz] = onArc(aS, Rc - 0.38), [sx, sz2] = toW(lx, lz);
       box(0.025, 0.3, 0.025, blackMat, sx, 0.15, sz2);
@@ -1113,7 +1140,7 @@
     const turn = Math.abs(wrapA(target.yaw - fromYaw));
     const dur = reduceMotion ? 1 : (msOverride || Math.min(10000, Math.max(1500, 1300 + len * 470 + (walking ? 0 : turn * 700))));
     const t0 = performance.now();
-    let walkYaw = fromYaw, last = t0, stepAt = 0.35, roomKey = (roomAt(camPos.x, camPos.z) || rooms[0]).key;
+    let walkYaw = fromYaw, last = t0, roomKey = (roomAt(camPos.x, camPos.z) || rooms[0]).key;
     const sitting = target.pos.y !== EYE || here.pos.y !== EYE;
     const MAX_TURN = 1.9, MAX_TILT = 1.2;                  // 고개 돌리는 최대 속도 (rad/초): 절대 휙 돌지 않게
     tween = (now) => {
@@ -1121,8 +1148,8 @@
       if (reduceMotion) { camPos.copy(target.pos); heading = target.yaw; tilt = target.pitch; return true; }
       const p = clamp01((now - t0) / dur), e = smooth(p);
       curve.getPointAt(e, tmpP); camPos.copy(tmpP);
-      if (len > 0.8 && !sitting) {                          // 걸은 거리 0.7m 마다 발소리
-        const walked = e * len, rr = roomAt(camPos.x, camPos.z);
+      if (len > 0.8 && !sitting) {                          // 다른 방으로 넘어가면 소리(울림·스피커)도 그 방으로
+        const rr = roomAt(camPos.x, camPos.z);
         if (rr && rr.key !== roomKey) { roomKey = rr.key; sfx.room(roomKey); }
       }
       let want, wantTilt;
@@ -1152,6 +1179,7 @@
   }
   let pending = null;
   function go(i, ms) {
+    exitFree();
     if (tween) { pending = () => go(i, ms); return; }
     scan = null;
     const n = stops.length;
@@ -1172,6 +1200,7 @@
     return door.b === 0 ? go(-1) : go(titleStop(door.b));                          // 앞으로: 다음 방 입구 가벽 앞
   }
   function sit(seat) {                                      // 소파에 앉기
+    exitFree();
     if (tween) { pending = () => sit(seat); return; }
     seated = true; close = false; scan = null;
     const first = frames.findIndex((f) => f.r.i === seat.room); if (first > -1) wantTextures(first + 2);   // 앉은 방의 사진 미리 불러오기
@@ -1187,7 +1216,7 @@
     setTimeout(() => { location.href = url; }, reduceMotion ? 50 : 1100);
   }
   function leave() {                                        // 웹사이트로 돌아가기: 문 앞까지 걸어간 뒤 어두워짐
-    if (leaving) return; leaving = true;
+    if (leaving) return; leaving = true; exitFree();
     if (xrOn) { renderer.xr.getSession().end(); }
     const d = lobby.doors.S;
     if (!reduceMotion && !tween && here.room === 0) {
@@ -1228,6 +1257,79 @@
       }
       cap.classList.remove('is-out');
     }, reduceMotion ? 0 : 280);
+  }
+
+  /* ---------- 자유 이동 (내 사이트에서만): W A S D 로 걷기 · Space 점프 · W 두 번 (또는 Shift) 달리기 ---------- */
+  const FREE_WALK = !/(^|\.)dostervibes\.kro\.kr$/.test(location.hostname);
+  const PLAYER_R = 0.28, WALK = 1.7, RUN = 3.9, GRAV = 9.8, JUMP_V = 3.3;
+  const keys = new Set(), vel = new THREE.Vector2();
+  let free = null, lastW = 0, runLatch = false, lastFree = 0, texTick = 0, bob = 0;
+  function nearestRoom(x, z) { let best = rooms[0], bd = Infinity; rooms.forEach((r) => { const d = Math.hypot(x - r.cx, z - r.cz); if (d < bd) { bd = d; best = r; } }); return best; }
+  function collide(p) {                                     // 벽·펜스·소파에 닿으면 미끄러지듯 밀려남
+    for (let it = 0; it < 3; it++) for (const [ax, az, bx, bz] of segs) {
+      const abx = bx - ax, abz = bz - az, l2 = abx * abx + abz * abz || 1e-9;
+      let t = ((p.x - ax) * abx + (p.z - az) * abz) / l2; t = t < 0 ? 0 : t > 1 ? 1 : t;
+      const cx = ax + abx * t, cz = az + abz * t, dx = p.x - cx, dz = p.z - cz, d = Math.hypot(dx, dz);
+      if (d < PLAYER_R && d > 1e-6) { p.x = cx + (dx / d) * PLAYER_R; p.z = cz + (dz / d) * PLAYER_R; }
+    }
+  }
+  function enterFree() {
+    if (free) return;
+    tween = null; pending = null; scan = null;
+    heading = wrapA(heading + yaw); tilt = THREE.MathUtils.clamp(tilt + pitch, -0.9, 0.9); yaw = 0; pitch = 0;
+    if (seated) { seated = false; document.body.classList.remove('is-seated'); }
+    close = false; camPos.y = EYE; vel.set(0, 0);
+    free = { y: 0, vy: 0, room: nearestRoom(camPos.x, camPos.z).key };
+    collide(camPos);
+    document.body.classList.remove('at-entrance');
+    const cap = $('caption'); cap.classList.add('is-out');
+    setTimeout(() => { if (!free) return; cap.classList.remove('is-room'); cap.innerHTML = '<span class="t">Free walk</span><span class="m"><span>W A S D to move</span><span>Space to jump</span><span>Double-tap W to run</span><span>→ back to the tour</span></span>'; cap.classList.remove('is-out'); }, 280);
+    dirty = true;
+  }
+  function exitFree() {                                     // 안내 투어(→, 사진 클릭)로 돌아갈 때: 지금 서 있는 곳에서 출발
+    if (!free) return;
+    free = null; keys.clear(); camPos.y = EYE;
+    const r = nearestRoom(camPos.x, camPos.z);
+    here = { pos: camPos.clone(), room: r.i, door: false };
+  }
+  function freeStep(now) {
+    const dt = Math.min(0.05, Math.max(0.001, (now - lastFree) / 1000)); lastFree = now;
+    const h = heading + yaw, fx = -Math.sin(h), fz = -Math.cos(h), rx = Math.cos(h), rz = -Math.sin(h);
+    const f = (keys.has('KeyW') ? 1 : 0) - (keys.has('KeyS') ? 1 : 0), sd = (keys.has('KeyD') ? 1 : 0) - (keys.has('KeyA') ? 1 : 0);
+    let tx = fx * f + rx * sd, tz = fz * f + rz * sd; const tl = Math.hypot(tx, tz);
+    const speed = (runLatch && keys.has('KeyW')) || keys.has('ShiftLeft') || keys.has('ShiftRight') ? RUN : WALK;
+    if (tl > 0) { tx = (tx / tl) * speed; tz = (tz / tl) * speed; }
+    const k = Math.min(1, dt * (tl > 0 ? 8 : 10));          // 부드럽게 출발·멈춤
+    vel.x += (tx - vel.x) * k; vel.y += (tz - vel.y) * k;
+    camPos.x += vel.x * dt; camPos.z += vel.y * dt; collide(camPos);
+    if (free.y > 0 || free.vy > 0) { free.vy -= GRAV * dt; free.y = Math.max(0, free.y + free.vy * dt); if (free.y === 0) free.vy = 0; }
+    const sp = vel.length(); bob += dt * (sp > 2.5 ? 11 : 8) * Math.min(1, sp);
+    camPos.y = EYE + free.y + (free.y === 0 ? Math.sin(bob) * 0.018 * Math.min(1, sp / WALK) : 0);   // 걸을 때 아주 살짝 흔들림
+    const rr = roomAt(camPos.x, camPos.z);
+    if (rr && rr.key !== free.room) { free.room = rr.key; sfx.room(rr.key); $('room').textContent = rr.i ? rr.label : 'Lobby'; }
+    if (now > texTick) {                                    // 가까운 사진부터 불러오기
+      texTick = now + 600; let bi = 0, bd = Infinity;
+      frames.forEach((fr, i) => { const d = Math.hypot(fr.p.x - camPos.x, fr.p.z - camPos.z); if (d < bd) { bd = d; bi = i; } });
+      wantTextures(bi);
+    }
+    return sp > 0.01 || free.y > 0 || free.vy > 0;
+  }
+  if (FREE_WALK) {
+    addEventListener('keydown', (e) => {
+      if (xrOn || e.metaKey || e.ctrlKey || e.altKey) return;
+      const c = e.code, move = c === 'KeyW' || c === 'KeyA' || c === 'KeyS' || c === 'KeyD';
+      if (!move && c !== 'Space' && c !== 'ShiftLeft' && c !== 'ShiftRight') return;
+      if (c === 'Space' && e.target.closest && e.target.closest('a, button')) return;
+      if (c.startsWith('Shift') && !free) return;
+      e.preventDefault(); e.stopImmediatePropagation();
+      if (!free) enterFree();
+      if (c === 'KeyW' && !e.repeat) { const now = performance.now(); runLatch = now - lastW < 320; lastW = now; }
+      if (c === 'Space' && !e.repeat && free.y === 0) free.vy = JUMP_V;
+      keys.add(c); lastFree = performance.now(); dirty = true;
+    }, true);
+    addEventListener('keyup', (e) => { keys.delete(e.code); if (e.code === 'KeyW') runLatch = false; });
+    addEventListener('blur', () => { keys.clear(); runLatch = false; });
+    if (!touch) { const d = document.querySelector('.intro .how .desk'); if (d) d.insertAdjacentHTML('beforeend', ' · <b>W A S D</b> to roam freely'); }
   }
 
   /* ---------- 입력 ---------- */
@@ -1298,7 +1400,7 @@
     const w = innerWidth, h = innerHeight;
     renderer.setSize(w, h, false);
     camera.aspect = w / h; camera.fov = camera.aspect < 0.8 ? 64 : 55; camera.updateProjectionMatrix();
-    if (current > -1 && !tween && !seated) { const v = viewForStop(current); camPos.copy(v.pos); heading = v.yaw; tilt = v.pitch; here = { pos: v.pos.clone(), room: v.room, door: !!v.door }; }
+    if (current > -1 && !tween && !seated && !free) { const v = viewForStop(current); camPos.copy(v.pos); heading = v.yaw; tilt = v.pitch; here = { pos: v.pos.clone(), room: v.room, door: !!v.door }; }
     dirty = true;
   }
   addEventListener('resize', resize); resize();
@@ -1311,7 +1413,8 @@
     }
     if (scan && now >= scan.t0) { const q = (now - scan.t0) / scan.ms; yaw = q >= 1 ? 0 : scan.A * Math.sin(2 * Math.PI * smooth(q)); if (q >= 1) scan = null; dirty = true; }
     for (let i = fades.length - 1; i >= 0; i--) if (fades[i](now)) fades.splice(i, 1);
-    if (!dirty && !tween && !fades.length && !scan) return;
+    const walkingFree = free ? freeStep(now) : false;
+    if (!dirty && !tween && !fades.length && !scan && !walkingFree) return;
     dirty = false;
     camera.position.copy(camPos);
     camera.rotation.set(tilt + pitch, heading + yaw, 0, 'YXZ');
@@ -1395,7 +1498,7 @@
 
   wantTextures(0);
   renderer.setAnimationLoop(frame);
-  window.__hall = { closeToggle: () => { close = !close; go(current, 1500); }, look: (y, p) => { heading = y; tilt = p || 0; yaw = 0; pitch = 0; dirty = true; }, go: (i) => go(i), door: (a) => goDoor({ a, b: (a + 1) % N_ROOMS }), stops: () => stops.map((s) => s.kind === 'title' ? 'T:' + s.r.key : s.kind === 'about' ? 'A:about' : s.f.w.cap[0]), sit: (k) => sit(sofaSeats[k] || sofaParts[k].userData.seat), state: () => ({ current, close, seated, scan: !!scan, yaw: +yaw.toFixed(3), room: here.room, frames: frames.length, loaded: frames.filter((f) => f.tex).length, cam: camPos.toArray().map((v) => +v.toFixed(2)), heading: +heading.toFixed(3), moving: !!tween }), frames: () => frames.map((f) => [f.r.key, f.w.cap[0], +f.p.x.toFixed(1), +f.p.z.toFixed(1), +f.fw.toFixed(2), +f.fh.toFixed(2)]) };
+  window.__hall = { free: () => (free ? { y: +free.y.toFixed(2), room: free.room } : null), key: (c, down) => { const ev = new KeyboardEvent(down ? 'keydown' : 'keyup', { code: c, bubbles: true }); dispatchEvent(ev); }, closeToggle: () => { close = !close; go(current, 1500); }, look: (y, p) => { heading = y; tilt = p || 0; yaw = 0; pitch = 0; dirty = true; }, go: (i) => go(i), door: (a) => goDoor({ a, b: (a + 1) % N_ROOMS }), stops: () => stops.map((s) => s.kind === 'title' ? 'T:' + s.r.key : s.kind === 'about' ? 'A:about' : s.f.w.cap[0]), sit: (k) => sit(sofaSeats[k] || sofaParts[k].userData.seat), state: () => ({ current, close, seated, scan: !!scan, yaw: +yaw.toFixed(3), room: here.room, frames: frames.length, loaded: frames.filter((f) => f.tex).length, cam: camPos.toArray().map((v) => +v.toFixed(2)), heading: +heading.toFixed(3), moving: !!tween }), frames: () => frames.map((f) => [f.r.key, f.w.cap[0], +f.p.x.toFixed(1), +f.p.z.toFixed(1), +f.fw.toFixed(2), +f.fh.toFixed(2)]) };
     </script>
 </body>
 </html>

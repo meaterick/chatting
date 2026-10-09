@@ -302,6 +302,7 @@
   var viewer = doc.getElementById('viewer');
   if (viewer && typeof viewer.showModal === 'function') {
     var vImg = viewer.querySelector('.viewer-img');
+    vImg.setAttribute('draggable', 'false');
     var vCap = viewer.querySelector('.viewer-caption');
     var vCount = viewer.querySelector('.viewer-count');
     var current = 0, opener = null, savedY = 0;
@@ -390,10 +391,17 @@
       updatePeeks(list);
       vCount.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(list.length).padStart(2, '0');
     }
+    var decoded = [];                              // 미리 받아서 '압축까지 풀어 둔' 사진 (넘기는 순간 버벅이지 않게)
+    function predecode(src) {
+      if (!src || decoded.some(function (d) { return d.src === src; })) return;
+      var pre = new Image(); pre.decoding = 'async'; pre.src = src;
+      if (pre.decode) pre.decode().catch(function () {});
+      decoded.push({ src: src, im: pre }); if (decoded.length > 6) decoded.shift();
+    }
     function preload(list) {                       // 양옆 사진을 미리 받아 둠
-      [current - 1, current + 1].forEach(function (k) {
+      [current - 1, current + 1, current + 2].forEach(function (k) {
         var im = list[(k + list.length) % list.length];
-        if (im) { var pre = new Image(); pre.decoding = 'async'; pre.src = im.currentSrc || im.src; }
+        if (im) predecode(im.currentSrc || im.src);
       });
     }
     function show(i, dir, fromX) {                 // dir: 1 다음, -1 이전 / fromX: 손가락으로 끌던 위치
@@ -679,6 +687,10 @@
   }
 
   guardAll();                                    // 페이지의 모든 사진에 보호막
+  // 보호막이 아닌 진짜 사진은 끌어서 저장·우클릭 저장이 안 되게 (사진이 움직이는 애니메이션 도중에도)
+  function isOriginal(t) { return t && t.tagName === 'IMG' && !t.classList.contains('img-guard'); }
+  doc.addEventListener('dragstart', function (e) { if (isOriginal(e.target)) e.preventDefault(); }, true);
+  doc.addEventListener('contextmenu', function (e) { if (isOriginal(e.target)) e.preventDefault(); }, true);
 
   /* 메뉴 이동 (Exhibition · About · Contact · 맨 위로): 길게 굴러 내려가지 않고,
      화면이 목적지 색으로 살짝 덮였다가 → 한 번에 이동 → 서서히 걷힘 */
