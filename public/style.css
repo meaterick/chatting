@@ -188,7 +188,8 @@ body.menu-open .site-header { background-color: var(--bg); color: var(--fg); bor
 img[data-viewable] { cursor: zoom-in; }
 /* 사진 보호막: 사진과 같은 자리에 투명하게 겹친 저해상도 워터마크 사본 (script.js가 추가) */
 img.img-guard { position: absolute !important; inset: 0; width: 100% !important; height: 100% !important; max-width: none !important; max-height: none !important; margin: 0 !important; opacity: 0 !important; transform: none !important; animation: none !important; transition: none !important; z-index: 2; -webkit-user-select: none; user-select: none; }
-.viewer-figure { position: relative; }
+.viewer-figure { position: relative; z-index: 1; }
+.viewer-ghost { position: absolute; z-index: 1; margin: 0; max-width: none; max-height: none; object-fit: contain; pointer-events: none; will-change: transform, opacity; }   /* 넘길 때 잠깐 남는 이전 사진 */
 .viewer img.img-guard { inset: auto; }
 img { -webkit-touch-callout: none; }   /* 휴대폰: 사진 길게 눌러 저장하는 메뉴 끄기 */
 
@@ -300,19 +301,61 @@ img { -webkit-touch-callout: none; }   /* 휴대폰: 사진 길게 눌러 저장
 .site-footer a:hover { color: var(--fg); }
 
 /* ---------- 13. 사진 크게 보기 ---------- */
-.viewer { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: #0a0a0a; color: #f2f1ed; overflow: hidden; }
-.viewer::backdrop { background: #0a0a0a; }
-.viewer[open] { display: grid; place-items: center; animation: fade .5s var(--ease-soft); }
-html.viewer-open { overflow: hidden; }
-.viewer-figure { display: flex; flex-direction: column; align-items: center; padding: 72px 72px 56px; max-width: 100%; }
-.viewer-img { max-width: 100%; max-height: calc(100vh - 180px); max-height: calc(100dvh - 180px); width: auto; height: auto; object-fit: contain; }
-.viewer-caption { margin-top: 18px; font: 400 .6875rem/1.6 var(--mono); letter-spacing: .08em; color: #9b9a96; text-align: center; }
+.viewer { width: 100vw; height: 100vh; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: transparent; color: #f2f1ed; overflow: hidden; }
+.viewer::backdrop { background: transparent; }
+.viewer[open] { display: grid; place-items: center; }
+/* 검은 배경은 따로 서서히 (사진은 페이지 속 제자리에서 떠올라 가운데로 이동) */
+.viewer::before { content: ""; position: fixed; inset: 0; z-index: 0; background: #0a0a0a; transition: opacity .48s cubic-bezier(.4, 0, .6, 1); }
+.viewer[open]::before { animation: fade .5s var(--ease-soft); }
+@keyframes ui-in { from { opacity: 0; } }
+.viewer[open] .viewer-caption, .viewer[open] .viewer-close, .viewer[open] .viewer-nav, .viewer[open] .viewer-count { animation: ui-in .6s var(--ease-soft) .25s backwards; }
+.viewer.is-closing::before, .viewer.is-closing .viewer-caption, .viewer.is-closing .viewer-close, .viewer.is-closing .viewer-nav, .viewer.is-closing .viewer-count, .viewer.is-closing .viewer-hint { opacity: 0; }
+.viewer.is-closing .viewer-caption, .viewer.is-closing .viewer-close, .viewer.is-closing .viewer-count { transition: opacity .3s ease; }
+.viewer { overscroll-behavior: contain; }   /* 뷰어 뒤 페이지는 script.js가 스크롤만 막음 (고정 구간이 풀리지 않게) */
+.page-veil { position: fixed; inset: 0; z-index: 95; pointer-events: none; opacity: 0; transition: opacity .34s cubic-bezier(.4, 0, .6, 1); }
+.page-veil.is-on { opacity: 1; }
+.page-veil.is-out { transition: opacity .7s var(--ease-soft); }
+.viewer-figure { display: flex; flex-direction: column; align-items: center; width: 100%; padding: 72px 72px 56px; max-width: 100%; }
+.viewer-img { display: block; width: 100%; height: calc(100vh - 180px); height: calc(100dvh - 180px); object-fit: contain; will-change: transform, opacity; }   /* 자리 고정 → 사진마다 위치가 안 바뀜 */
+.viewer-caption { margin-top: 16px; padding-inline: 12px; font: 400 .6875rem/1.7 var(--mono); letter-spacing: .08em; color: #9b9a96; text-align: center; text-wrap: balance; }
+.viewer-caption .vc-title { display: block; margin-bottom: 2px; font: italic 400 1rem/1.4 var(--serif); letter-spacing: 0; color: #f2f1ed; }
+.viewer-caption .vc-item { white-space: nowrap; }
+.viewer-caption .vc-sep { margin-left: .7em; margin-right: .1em; opacity: .5; }
 .viewer-close { position: absolute; top: 18px; right: var(--pad); padding: 8px 0; font: 500 .75rem/1 var(--mono); letter-spacing: .14em; text-transform: uppercase; }
-.viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 56px; height: 56px; font-size: 1.25rem; opacity: .6; transition: opacity .3s; }
+.viewer-nav { position: absolute; top: 50%; transform: translateY(-50%); width: 72px; height: min(44vh, 420px); font-size: 1.25rem; opacity: .6; transition: opacity .3s; }
 .viewer-nav:hover, .viewer-nav:focus-visible { opacity: 1; }
 .viewer-prev { left: 8px; }
 .viewer-next { right: 8px; }
 .viewer-count { position: absolute; left: var(--pad); top: 22px; font: 500 .6875rem/1 var(--mono); letter-spacing: .14em; color: #9b9a96; }
+.viewer-peek { position: absolute; top: 50%; z-index: 0; height: min(40vh, 380px); width: auto; max-width: 30vw; object-fit: cover; opacity: .26; pointer-events: none; -webkit-user-select: none; user-select: none; transition: transform .8s var(--ease), opacity .6s var(--ease-soft); }
+.viewer-peek--prev { left: 0; transform: translate(calc(-100% + 46px), -50%); }
+.viewer-peek--next { right: 0; transform: translate(calc(100% - 46px), -50%); }
+.viewer-prev:hover ~ .viewer-peek--prev, .viewer-prev:focus-visible ~ .viewer-peek--prev { transform: translate(calc(-100% + 120px), -50%); opacity: .62; }
+.viewer-next:hover ~ .viewer-peek--next, .viewer-next:focus-visible ~ .viewer-peek--next { transform: translate(calc(100% - 120px), -50%); opacity: .62; }
+.viewer[open] .viewer-peek { animation: ui-in .8s var(--ease-soft) .35s backwards; }
+.viewer.is-closing .viewer-peek, .viewer.is-zoomed .viewer-peek { opacity: 0; }
+.viewer.is-dragging-peek .viewer-peek { transition: none; }
+
+/* 사진에 마우스를 올리면: 방 목록(Five rooms)처럼 살짝 움직이며 '더 볼 수 있음'을 알려줌 */
+.viewer-close, .viewer-nav, .viewer-count { z-index: 5; }
+.viewer .img-guard { cursor: zoom-in; }
+.viewer-hint { position: absolute; z-index: 3; display: flex; align-items: center; gap: 10px; padding: 9px 14px; font: 500 .625rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: #f2f1ed; background: rgba(10,10,10,.42); -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); pointer-events: none; opacity: 0; transform: translate(-50%, 8px); transition: opacity .5s var(--ease-soft), transform .8s var(--ease); white-space: nowrap; }
+.viewer-hint .arrow { display: inline-block; transition: transform .8s var(--ease); }
+@media (hover: hover) {
+  .viewer-img { transition: scale .8s var(--ease); }
+  .viewer.is-hover:not(.is-zoomed):not(.is-closing) .viewer-img { scale: 1.015; }
+  .viewer.is-closing .viewer-img { transition: scale .5s cubic-bezier(.32, 0, .2, 1); }
+  .viewer.is-hover:not(.is-zoomed):not(.is-closing) .viewer-hint { opacity: 1; transform: translate(-50%, 0); }
+  .viewer.is-hover:not(.is-zoomed):not(.is-closing) .viewer-hint .arrow { transform: translateX(6px); }
+}
+/* 사진을 한 번 더 누르면: 화면에 꽉 차게 확대 → 스크롤·드래그로 둘러보기, 다시 누르면 돌아감 */
+.viewer-figure, .viewer-caption, .viewer-nav, .viewer-count { transition: opacity .45s var(--ease-soft); }
+.viewer.is-zoomed .viewer-figure { position: fixed; inset: 0; display: block; padding: 0; overflow: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+.viewer.is-zoomed .viewer-figure::-webkit-scrollbar { display: none; }
+.viewer.is-zoomed .viewer-img { max-width: none; max-height: none; object-fit: fill; transition: none; }
+.viewer.is-zoomed .viewer-caption, .viewer.is-zoomed .viewer-nav, .viewer.is-zoomed .viewer-count, .viewer.is-zoomed .viewer-hint { opacity: 0; pointer-events: none; }
+.viewer.is-zoomed .img-guard { cursor: zoom-out; }
+.viewer.is-dragging .img-guard { cursor: grabbing; }
 
 /* ---------- 14. 스크롤 애니메이션 (transform/opacity만 사용) ---------- */
 .js .reveal { opacity: 0; transform: translate3d(0, 36px, 0); transition: opacity 1.3s var(--ease-soft), transform 1.6s var(--ease); transition-delay: var(--d, 0s); }
@@ -388,8 +431,11 @@ html.viewer-open { overflow: hidden; }
   .practice li { grid-template-columns: 1fr; }
 
   .viewer-figure { padding: 64px 12px 72px; }
-  .viewer-img { max-height: calc(100dvh - 190px); }
-  .viewer-nav { top: auto; bottom: 10px; transform: none; }
+  .viewer-img { height: calc(100vh - 190px); height: calc(100dvh - 190px); }
+  .viewer-nav { top: auto; bottom: 10px; transform: none; width: 56px; height: 56px; }
+  .viewer-peek { height: 26vh; max-width: 40vw; opacity: .3; }
+  .viewer-peek--prev { transform: translate(calc(-100% + 10px), -50%); }
+  .viewer-peek--next { transform: translate(calc(100% - 10px), -50%); }
 }
 
 /* ---------- 17. 움직임 줄이기 ---------- */

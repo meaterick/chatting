@@ -276,8 +276,8 @@
   /* 사진 보호: 사진 위에 보이지 않는 막(워터마크가 들어간 저해상도 사본)을 덮음.
      우클릭 저장·복사·드래그를 하면 원본 대신 이 사본이 저장됨. 사본은 images/guard/ 에 같은 이름으로 있음 */
   function guardSrc(img) {
-    var s = (img.getAttribute('src') || '').split('?')[0];
-    return s.indexOf('images/') === 0 && s.indexOf('images/guard/') !== 0 ? 'images/guard/' + s.slice(7) : null;
+    var full = img.getAttribute('src') || '', s = full.split('?')[0], q = full.slice(s.length);   // ?v=… (친구 서버의 버전 표시)는 그대로 이어 붙임
+    return s.indexOf('images/') === 0 && s.indexOf('images/guard/') !== 0 ? 'images/guard/' + s.slice(7) + q : null;
   }
   function makeGuard(src) {
     var g = doc.createElement('img');
@@ -307,11 +307,40 @@
     var current = 0, opener = null, savedY = 0;
     var vGuard = makeGuard();                      // 뷰어의 큰 사진 위 보호막 (사진 크기·위치에 맞춤)
     vImg.parentNode.appendChild(vGuard);
-    function placeVGuard() {
-      var st = vGuard.style;
-      st.left = vImg.offsetLeft + 'px'; st.top = vImg.offsetTop + 'px';
-      st.setProperty('width', vImg.offsetWidth + 'px', 'important');
-      st.setProperty('height', vImg.offsetHeight + 'px', 'important');
+    var vHint = doc.createElement('span');         // 사진에 마우스를 올리면 뜨는 안내
+    vHint.className = 'viewer-hint'; vHint.setAttribute('aria-hidden', 'true');
+    vHint.innerHTML = 'Click to look closer <span class="arrow">→</span>';
+    vImg.parentNode.appendChild(vHint);
+    var zoomed = false;
+    var peekPrev = doc.createElement('img'), peekNext = doc.createElement('img');   // 양옆 사진 미리보기
+    [peekPrev, peekNext].forEach(function (pk, k) {
+      pk.className = 'viewer-peek ' + (k ? 'viewer-peek--next' : 'viewer-peek--prev');
+      pk.alt = ''; pk.setAttribute('aria-hidden', 'true'); pk.setAttribute('draggable', 'false'); pk.decoding = 'async';
+      viewer.appendChild(pk);
+    });
+    function updatePeeks(list) {
+      var n = list.length; if (n < 2) { peekPrev.removeAttribute('src'); peekNext.removeAttribute('src'); return; }
+      [[peekPrev, list[(current - 1 + n) % n]], [peekNext, list[(current + 1) % n]]].forEach(function (pair) {
+        var src = pair[1].currentSrc || pair[1].src;
+        if (pair[0].getAttribute('src') === src) return;
+        pair[0].src = src;
+        if (viewer.open && animOK()) pair[0].animate([{ opacity: 0 }, {}], { duration: 600, easing: 'ease-out' });
+      });
+    }
+    function contentRect() {                       // 상자 안에서 실제 사진이 그려진 영역 (여백 제외, 뷰어 기준 좌표)
+      var x = vImg.offsetLeft, y = vImg.offsetTop, w = vImg.offsetWidth, h = vImg.offsetHeight;
+      var nw = vImg.naturalWidth, nh = vImg.naturalHeight;
+      if (zoomed || !nw || !nh) return { x: x, y: y, w: w, h: h };
+      var k = Math.min(w / nw, h / nh), cw = nw * k, ch = nh * k;
+      return { x: x + (w - cw) / 2, y: y + (h - ch) / 2, w: cw, h: ch };
+    }
+    function placeVGuard() {                       // 보호막·안내를 '사진이 있는 부분'에만 맞춤
+      var r = contentRect(), st = vGuard.style;
+      st.left = r.x + 'px'; st.top = r.y + 'px';
+      st.setProperty('width', r.w + 'px', 'important');
+      st.setProperty('height', r.h + 'px', 'important');
+      vHint.style.left = (r.x + r.w / 2) + 'px';
+      vHint.style.top = (r.y + r.h - 54) + 'px';
     }
     vImg.addEventListener('load', placeVGuard);
     window.addEventListener('resize', function () { if (viewer.open) placeVGuard(); });
@@ -321,42 +350,266 @@
         .filter(function (img) { return !img.closest('a') && !img.hasAttribute('data-negative'); });
       return viewList;
     }
-    function captionFor(img) {
+    function captionParts(img) {
       var fig = img.closest('figure'), cap = fig && fig.querySelector('figcaption');
-      if (!cap) return '';
-      return Array.prototype.map.call(cap.children, function (c) { return c.textContent.trim(); }).filter(Boolean).join('  ·  ');
+      if (!cap) return [];
+      return Array.prototype.map.call(cap.children, function (c) { return c.textContent.trim(); }).filter(Boolean);
     }
-    function show(i) {
-      var list = viewables(); if (!list.length) return;
-      current = (i + list.length) % list.length;
-      var img = list[current];
+    function renderCaption(img) {                  // 제목은 한 줄, 정보는 항목이 중간에 끊기지 않게
+      var parts = captionParts(img);
+      vCap.textContent = '';
+      if (!parts.length) return;
+      var t = doc.createElement('span'); t.className = 'vc-title'; t.textContent = parts[0]; vCap.appendChild(t);
+      var rest = parts.slice(1);
+      rest.forEach(function (txt, k) {             // 구분점(·)은 앞 항목에 붙여서 줄 맨 앞에 오지 않게
+        var it = doc.createElement('span'); it.className = 'vc-item'; it.textContent = txt;
+        if (k < rest.length - 1) { var sep = doc.createElement('span'); sep.className = 'vc-sep'; sep.setAttribute('aria-hidden', 'true'); sep.textContent = '·'; it.appendChild(sep); }
+        vCap.appendChild(it); vCap.appendChild(doc.createTextNode(' '));
+      });
+    }
+    /* 뷰어 움직임: 투명도·이동만 써서 부드럽게 (무거운 3D·필터 없음) */
+    var EASE = 'cubic-bezier(.22, .61, .36, 1)';
+    function animOK() { return !reduceMotion && typeof vImg.animate === 'function'; }
+    var ghost = null, closing = false, closeTimer = null, outAnim = null;
+    function dropGhost() { if (ghost) { ghost.remove(); ghost = null; } }
+    function ready(im, cb) {                        // 새 사진을 미리 풀어 둔(decode) 뒤에 보여줌 → 버벅임·빈 화면 없음
+      var done = false;
+      function go() { if (!done) { done = true; cb(); } }
+      if (im.decode) im.decode().then(go, go);
+      else if (im.complete) go();
+      else im.addEventListener('load', go, { once: true });
+      setTimeout(go, 700);                          // 너무 오래 걸리면 그냥 진행
+    }
+    function setPhoto(img) {
+      var list = viewables();
       vImg.src = img.currentSrc || img.src;
       vImg.alt = img.alt || '';
       var gs = guardSrc(img);
       if (gs) vGuard.src = gs; else vGuard.removeAttribute('src');
-      vCap.textContent = captionFor(img);
+      renderCaption(img);
+      updatePeeks(list);
       vCount.textContent = String(current + 1).padStart(2, '0') + ' / ' + String(list.length).padStart(2, '0');
+    }
+    function preload(list) {                       // 양옆 사진을 미리 받아 둠
+      [current - 1, current + 1].forEach(function (k) {
+        var im = list[(k + list.length) % list.length];
+        if (im) { var pre = new Image(); pre.decoding = 'async'; pre.src = im.currentSrc || im.src; }
+      });
+    }
+    function show(i, dir, fromX) {                 // dir: 1 다음, -1 이전 / fromX: 손가락으로 끌던 위치
+      var list = viewables(); if (!list.length) return;
+      current = (i + list.length) % list.length;
+      var img = list[current];
+      setLifted(null);
+      dropGhost();
+      if (!dir || !animOK() || !viewer.open || !vImg.getAttribute('src')) {
+        vImg.style.transform = ''; vImg.style.opacity = '';
+        setPhoto(img); preload(list); return;
+      }
+      var x0 = fromX || 0, o0 = parseFloat(vImg.style.opacity || '1');
+      var g = vImg.cloneNode(false);               // 지금 사진을 잠깐 위에 남겨 두고, 새 사진이 준비되면 교차
+      g.className = 'viewer-ghost'; g.alt = ''; g.setAttribute('aria-hidden', 'true');
+      g.removeAttribute('style');
+      var st = g.style;
+      st.left = vImg.offsetLeft + 'px'; st.top = vImg.offsetTop + 'px';
+      st.width = vImg.offsetWidth + 'px'; st.height = vImg.offsetHeight + 'px';
+      st.transform = 'translateX(' + x0 + 'px)'; st.opacity = String(o0);
+      vImg.parentNode.insertBefore(g, vGuard);
+      ghost = g;
+      vImg.style.transform = ''; vImg.style.opacity = '0';
+      setPhoto(img);
+      var D = 48 * dir;
+      settle(700);
+      ready(vImg, function () {
+        if (ghost !== g) return;                    // 그 사이 또 넘겼으면 이번 건 건너뜀
+        g.animate([
+          { transform: 'translateX(' + x0 + 'px)', opacity: o0 },
+          { transform: 'translateX(' + (x0 - D) + 'px)', opacity: 0 }
+        ], { duration: 380, easing: EASE, fill: 'forwards' }).onfinish = function () {
+          g.remove(); if (ghost === g) ghost = null;
+        };
+        vImg.style.opacity = '';
+        vImg.animate([{ transform: 'translateX(' + D + 'px)', opacity: 0 }, { transform: 'none', opacity: 1 }],
+          { duration: 560, easing: EASE });
+        vCap.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease-out' });
+      });
+      preload(list);
+    }
+    var lifted = null;                             // 뷰어로 '들어 올린' 페이지 속 사진 (그동안 제자리는 비워 둠)
+    function setLifted(im) {
+      if (lifted && lifted !== im) lifted.style.visibility = '';
+      lifted = im || null;
+      if (lifted) lifted.style.visibility = 'hidden';
+    }
+    function pageRect(im) {                        // 페이지 속 사진이 실제로 보이는 영역 (액자 밖으로 잘린 부분 제외)
+      if (!im || !im.isConnected) return null;
+      var r = im.getBoundingClientRect(), f = im.parentNode.getBoundingClientRect();
+      var x = Math.max(r.left, f.left), y = Math.max(r.top, f.top);
+      var w = Math.min(r.right, f.right) - x, h = Math.min(r.bottom, f.bottom) - y;
+      if (w < 8 || h < 8 || y > window.innerHeight || y + h < 0 || x > window.innerWidth || x + w < 0) return null;
+      return { x: x, y: y, w: w, h: h };
+    }
+    function transformTo(o) {                      // 뷰어 사진(여백 제외 부분)을 o 자리에 겹쳐 보이게 하는 변환
+      var c = contentRect(), fr = fig.getBoundingClientRect();
+      var b = { left: fr.left + vImg.offsetLeft, top: fr.top + vImg.offsetTop };   // 확대 효과(scale)와 무관한 상자 위치
+      var cx = fr.left + c.x, cy = fr.top + c.y; if (!c.w) return null;
+      var s = o.w / c.w;
+      return 'translate(' + (o.x - b.left - (cx - b.left) * s) + 'px,' + (o.y - b.top - (cy - b.top) * s) + 'px) scale(' + s + ')';
     }
     function open(img) {
       var i = viewables().indexOf(img); if (i < 0) return;
-      opener = img; show(i);
+      clearTimeout(closeTimer); closing = false; viewer.classList.remove('is-closing');
+      if (outAnim) { outAnim.cancel(); outAnim = null; }
+      opener = img; current = i; dropGhost();
+      vImg.style.transform = '';
+      if (animOK()) vImg.style.opacity = '0';
+      setPhoto(img);
       savedY = window.scrollY;                     // 닫을 때 이 위치로 돌아옴 (iOS가 포커스 복원하며 화면을 옮기는 문제 방지)
       root.classList.add('viewer-open');
       if (doc.activeElement && doc.activeElement !== body && doc.activeElement.blur) doc.activeElement.blur();   // 닫을 때 브라우저가 터치한 사진으로 '스크롤 이동'하지 않게
       viewer.showModal();
-      viewer.querySelector('.viewer-close').focus();
+      viewer.querySelector('.viewer-close').focus({ preventScroll: true });
+      if (animOK()) settle(900);
+      if (animOK()) ready(vImg, function () {      // 페이지 속 그 사진이 제자리에서 떠올라 가운데로 커지며 이동 (배경은 서서히 어두워짐)
+        if (!viewer.open || closing) return;
+        vImg.style.opacity = '';
+        var o = pageRect(img), from = o && vImg.naturalWidth ? transformTo(o) : null;
+        if (from) {
+          setLifted(img);
+          vImg.animate([{ transformOrigin: '0 0', transform: from }, { transformOrigin: '0 0', transform: 'none' }],
+            { duration: 640, easing: EASE });
+        } else {
+          vImg.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }],
+            { duration: 640, easing: EASE });
+        }
+      });
+      setTimeout(function () { if (viewer.open) preload(viewables()); }, 800);
     }
-    function close() { if (viewer.open) viewer.close(); }
+    /* 확대해서 둘러보기 */
+    var fig = vImg.parentNode, drag = null, dragMoved = false;
+    function flip(from, to) {                      // from 위치·크기에서 지금 자리로 부드럽게 이동
+      if (!animOK()) return;
+      var s = from.w / to.w;
+      vImg.animate([
+        { transformOrigin: '0 0', transform: 'translate(' + (from.x - to.x) + 'px,' + (from.y - to.y) + 'px) scale(' + s + ')' },
+        { transformOrigin: '0 0', transform: 'none' }
+      ], { duration: 560, easing: EASE });
+    }
+    function enterZoom(cx, cy) {
+      var nw = vImg.naturalWidth, nh = vImg.naturalHeight; if (!nw || !nh) return;
+      var before = vImg.getBoundingClientRect(), c = contentRect(), fr = fig.getBoundingClientRect();
+      var from = { x: fr.left + c.x, y: fr.top + c.y, w: c.w, h: c.h };
+      var fx = (cx - from.x) / from.w, fy = (cy - from.y) / from.h;
+      var vw = window.innerWidth, vh = window.innerHeight;
+      var cover = Math.max(vw / nw, vh / nh), fit = c.w / nw;
+      var z = Math.max(cover, Math.min(fit * 2.2, 1));   // 화면을 꽉 채우고, 디테일이 보이게 조금 더 크게 (원본보다 크게는 안 함)
+      zoomed = true; viewer.classList.add('is-zoomed'); viewer.classList.remove('is-hover');
+      vImg.style.width = Math.round(nw * z) + 'px'; vImg.style.height = Math.round(nh * z) + 'px';
+      fig.scrollLeft = fx * nw * z - cx; fig.scrollTop = fy * nh * z - cy;   // 누른 곳이 손가락·마우스 아래에 오게
+      placeVGuard();
+      var r = vImg.getBoundingClientRect();
+      flip(from, { x: r.left, y: r.top, w: r.width, h: r.height });
+    }
+    function exitZoom() {
+      if (!zoomed) return;
+      var z = vImg.getBoundingClientRect();
+      zoomed = false; viewer.classList.remove('is-zoomed', 'is-dragging');
+      vImg.style.width = ''; vImg.style.height = '';
+      fig.scrollLeft = 0; fig.scrollTop = 0;
+      placeVGuard();
+      var c = contentRect(), fr = fig.getBoundingClientRect(), b = vImg.getBoundingClientRect();
+      if (!animOK() || !c.w) return;
+      var s = z.width / c.w;                          // 상자 속 사진 부분이 확대돼 있던 자리에서 시작
+      var tx = z.left - b.left - (fr.left + c.x - b.left) * s, ty = z.top - b.top - (fr.top + c.y - b.top) * s;
+      vImg.animate([
+        { transformOrigin: '0 0', transform: 'translate(' + tx + 'px,' + ty + 'px) scale(' + s + ')' },
+        { transformOrigin: '0 0', transform: 'none' }
+      ], { duration: 520, easing: EASE });
+    }
+    vGuard.addEventListener('click', function (e) {
+      if (dragMoved) { dragMoved = false; return; }   // 끌어서 둘러본 경우는 클릭으로 치지 않음
+      if (zoomed) exitZoom(); else enterZoom(e.clientX, e.clientY);
+    });
+    var settling = 0;                               // 사진이 움직이는 동안은 마우스 올림 효과를 미룸
+    function settle(ms) {
+      settling++; viewer.classList.remove('is-hover');
+      setTimeout(function () {
+        settling--;
+        if (!settling && viewer.open && !zoomed && !closing && vGuard.matches(':hover')) viewer.classList.add('is-hover');
+      }, ms);
+    }
+    vGuard.addEventListener('mouseenter', function () { if (!zoomed && !settling && !closing) viewer.classList.add('is-hover'); });
+    vGuard.addEventListener('mouseleave', function () { viewer.classList.remove('is-hover'); });
+    fig.addEventListener('pointerdown', function (e) {   // 컴퓨터: 확대된 사진을 마우스로 끌어서 둘러보기
+      dragMoved = false;
+      if (!zoomed || e.pointerType !== 'mouse' || e.button !== 0) return;
+      e.preventDefault();                          // 글자 선택·이미지 끌어놓기 대신 둘러보기
+      drag = { x: e.clientX, y: e.clientY, l: fig.scrollLeft, t: fig.scrollTop };
+    });
+    fig.addEventListener('dragstart', function (e) { if (zoomed) e.preventDefault(); });
+    window.addEventListener('pointermove', function (e) {
+      if (!drag) return;
+      var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      if (!dragMoved && Math.abs(dx) + Math.abs(dy) > 5) { dragMoved = true; viewer.classList.add('is-dragging'); }
+      if (dragMoved) { fig.scrollLeft = drag.l - dx; fig.scrollTop = drag.t - dy; }
+    });
+    window.addEventListener('pointerup', function () { if (drag) { drag = null; viewer.classList.remove('is-dragging'); } });
+    fig.addEventListener('wheel', function (e) {   // 가로로만 넘치는 사진은 휠을 가로 이동으로
+      if (!zoomed || e.shiftKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      if (fig.scrollHeight <= fig.clientHeight + 1 && fig.scrollWidth > fig.clientWidth) { fig.scrollLeft += e.deltaY; e.preventDefault(); }
+    }, { passive: false });
+
+    function close() {                             // 사진이 살짝 작아지며 서서히 사라진 뒤 닫힘
+      if (!viewer.open || closing) return;
+      if (!animOK()) { viewer.close(); return; }
+      closing = true;
+      dropGhost();
+      viewer.classList.remove('is-hover');
+      viewer.classList.add('is-closing');
+      var target = viewables()[current], o = !zoomed && vImg.naturalWidth ? pageRect(target) : null, to = o ? transformTo(o) : null;
+      if (to) {                                     // 지금 보던 사진이 페이지 속 제자리로 돌아가며 내려앉음
+        setLifted(target);
+        outAnim = vImg.animate([{ transformOrigin: '0 0', transform: 'none' }, { transformOrigin: '0 0', transform: to }],
+          { duration: 520, easing: 'cubic-bezier(.32, .0, .2, 1)', fill: 'forwards' });
+      } else {                                      // 페이지에 안 보이는 사진이면 살짝 작아지며 사라짐
+        outAnim = vImg.animate([{ opacity: 1, transform: 'none' }, { opacity: 0, transform: 'scale(.97)' }],
+          { duration: 420, easing: 'cubic-bezier(.4, 0, .6, 1)', fill: 'forwards' });
+      }
+      closeTimer = setTimeout(function () { viewer.close(); }, to ? 540 : 440);
+    }
+    function blockPage(e) {                        // 확대해서 둘러볼 때(사진 영역 안)만 스크롤 허용
+      if (zoomed && fig.contains(e.target)) return;
+      if (e.cancelable) e.preventDefault();
+    }
+    viewer.addEventListener('wheel', blockPage, { passive: false });
+    viewer.addEventListener('touchmove', blockPage, { passive: false });
+    viewer.addEventListener('keydown', function (e) {
+      if (!zoomed && ['PageDown', 'PageUp', 'Home', 'End', 'ArrowUp', 'ArrowDown'].indexOf(e.key) > -1) e.preventDefault();
+      if (!zoomed && e.key === ' ' && !(e.target.closest && e.target.closest('button'))) e.preventDefault();
+    });
+    viewer.addEventListener('cancel', function (e) { e.preventDefault(); if (zoomed) exitZoom(); else close(); });   // Esc: 확대 중이면 먼저 돌아가고, 아니면 서서히 닫힘
 
     viewer.addEventListener('close', function () {
       root.classList.remove('viewer-open');
       vImg.removeAttribute('src');
       vGuard.removeAttribute('src');
+      dropGhost();
+      clearTimeout(closeTimer); closing = false; viewer.classList.remove('is-closing');
+      if (outAnim) { outAnim.cancel(); outAnim = null; }
+      vImg.style.transform = ''; vImg.style.opacity = '';
+      zoomed = false; viewer.classList.remove('is-zoomed', 'is-hover', 'is-dragging');
+      setLifted(null);
+      vImg.style.width = ''; vImg.style.height = ''; fig.scrollLeft = 0; fig.scrollTop = 0;
       if (opener && opener.isConnected) opener.focus({ preventScroll: true });
       restoreScroll();
       requestAnimationFrame(restoreScroll);
-      setTimeout(restoreScroll, 80);
-      setTimeout(restoreScroll, 350);
+      var rt = [setTimeout(restoreScroll, 80), setTimeout(restoreScroll, 200)];
+      function userMoved() {                       // 사용자가 바로 스크롤하면 위치 되돌리기는 멈춤
+        rt.forEach(clearTimeout);
+        ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.removeEventListener(t, userMoved, true); });
+      }
+      ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(function (t) { window.addEventListener(t, userMoved, { capture: true, passive: true }); });
+      setTimeout(userMoved, 250);
     });
     function restoreScroll() {                     // 부드러운 스크롤 없이 원래 자리로 즉시 복귀 → 확대 사진도 그대로
       if (Math.abs(window.scrollY - savedY) < 2) return;
@@ -381,26 +634,98 @@
       if (t && t.matches && t.matches('img[data-viewable]') && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); open(t); }
     });
     viewer.querySelector('.viewer-close').addEventListener('click', close);
-    viewer.querySelector('.viewer-prev').addEventListener('click', function () { show(current - 1); });
-    viewer.querySelector('.viewer-next').addEventListener('click', function () { show(current + 1); });
+    viewer.querySelector('.viewer-prev').addEventListener('click', function () { if (!zoomed) show(current - 1, -1); });
+    viewer.querySelector('.viewer-next').addEventListener('click', function () { if (!zoomed) show(current + 1, 1); });
     viewer.addEventListener('click', function (e) {
+      if (zoomed) return;
       if (e.target === viewer || e.target.classList.contains('viewer-figure')) close();
     });
     viewer.addEventListener('keydown', function (e) {
-      if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1); }
-      else if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1); }
+      if (zoomed) return;
+      if (e.key === 'ArrowRight') { e.preventDefault(); show(current + 1, 1); }
+      else if (e.key === 'ArrowLeft') { e.preventDefault(); show(current - 1, -1); }
     });
-    var touchX = null;
-    viewer.addEventListener('touchstart', function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    var touchX = null, dragX = 0;                  // 휴대폰: 사진이 손가락을 따라오다가 넘어감
+    viewer.addEventListener('touchstart', function (e) {
+      touchX = e.touches.length === 1 ? e.touches[0].clientX : null; dragX = 0;
+    }, { passive: true });
+    viewer.addEventListener('touchmove', function (e) {
+      if (touchX === null || closing || zoomed || !animOK()) return;
+      if (e.touches.length !== 1) { touchX = null; return; }
+      dragX = (e.touches[0].clientX - touchX) * 0.55;
+      vImg.style.transform = 'translateX(' + dragX.toFixed(1) + 'px)';
+      vImg.style.opacity = String(1 - Math.min(Math.abs(dragX) / 520, 0.35));
+      viewer.classList.add('is-dragging-peek');
+      var pk = dragX < 0 ? peekNext : peekPrev, other = dragX < 0 ? peekPrev : peekNext, edge = window.innerWidth < 900 ? 10 : 46;
+      pk.style.transform = 'translate(calc(' + (dragX < 0 ? '100% - ' : '-100% + ') + (edge + Math.abs(dragX) * 1.4).toFixed(1) + 'px), -50%)';
+      pk.style.opacity = String(Math.min(0.3 + Math.abs(dragX) / 300, 0.8));
+      other.style.transform = ''; other.style.opacity = '';
+    }, { passive: true });
     viewer.addEventListener('touchend', function (e) {
       if (touchX === null) return;
-      var dx = e.changedTouches[0].clientX - touchX;
-      if (Math.abs(dx) > 50) show(current + (dx < 0 ? 1 : -1));
-      touchX = null;
+      if (zoomed) { touchX = null; return; }        // 확대 중에는 손가락으로 둘러보기만
+      var dx = e.changedTouches[0].clientX - touchX, from = dragX;
+      touchX = null; dragX = 0;
+      viewer.classList.remove('is-dragging-peek');
+      [peekPrev, peekNext].forEach(function (pk) { pk.style.transform = ''; pk.style.opacity = ''; });
+      if (Math.abs(dx) > 50) { var d = dx < 0 ? 1 : -1; show(current + d, d, from); return; }
+      if (from) {                                   // 조금만 끌었으면 제자리로 부드럽게 돌아옴
+        var o = parseFloat(vImg.style.opacity || '1');
+        vImg.style.transform = ''; vImg.style.opacity = '';
+        vImg.animate([{ transform: 'translateX(' + from + 'px)', opacity: o }, { transform: 'none', opacity: 1 }],
+          { duration: 280, easing: EASE });
+      }
     }, { passive: true });
   }
 
   guardAll();                                    // 페이지의 모든 사진에 보호막
+
+  /* 메뉴 이동 (Exhibition · About · Contact · 맨 위로): 길게 굴러 내려가지 않고,
+     화면이 목적지 색으로 살짝 덮였다가 → 한 번에 이동 → 서서히 걷힘 */
+  var veil = doc.createElement('div');
+  veil.className = 'page-veil'; veil.setAttribute('aria-hidden', 'true');
+  body.appendChild(veil);
+  function jumpY(t) {
+    if (t.id === 'top') return 0;
+    var y = t.getBoundingClientRect().top + window.scrollY;
+    if (t.querySelector('.vseq-aside')) {          // Portrait처럼 제목이 옆에 따라오는 방: 첫 사진이 아래로 잘리면 사진 전체가 보일 만큼만 더 내려감
+      var img = t.querySelector('.vseq-list img:not(.img-guard)');
+      if (img) {
+        var r = img.parentNode.getBoundingClientRect(), vh = window.innerHeight;
+        var top = r.top + window.scrollY - y, bottom = r.bottom + window.scrollY - y;   // 방 맨 위 기준 사진 위치
+        var need = bottom + 24 - vh, room = top - (metrics.headerH || 64) - 16;      // 아래 여백 24px, 위는 메뉴바에 안 가리게
+        if (need > 0) y += Math.max(0, Math.min(need, room));
+      }
+    }
+    return Math.round(y);
+  }
+  function jumpNow(y) {
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, y);
+    root.style.scrollBehavior = '';
+  }
+  function jumpTo(t) {
+    if (reduceMotion) { jumpNow(jumpY(t)); return; }
+    var dark = (t.getAttribute('data-theme') || (t.closest('[data-theme]') || body).getAttribute('data-theme')) !== 'light';
+    veil.style.backgroundColor = getComputedStyle(root).getPropertyValue(dark ? '--dark-bg' : '--light-bg') || '#0a0a0a';
+    veil.classList.remove('is-out'); veil.classList.add('is-on');
+    setTimeout(function () {
+      jumpNow(jumpY(t));
+      // 사진이 늦게 불러와지며 위쪽 높이가 바뀌어도 정확히 목적지에 서도록 몇 번 다시 맞춤
+      requestAnimationFrame(function () { jumpNow(jumpY(t)); });
+      setTimeout(function () { jumpNow(jumpY(t)); veil.classList.add('is-out'); veil.classList.remove('is-on'); }, 120);
+      setTimeout(function () { var y = jumpY(t); if (Math.abs(y - window.scrollY) > 2) jumpNow(y); }, 700);
+    }, 360);
+  }
+  doc.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]');
+    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey) return;
+    if (!a.closest('.site-header, #menu, .site-footer, .room-index')) return;     // 위 메뉴·휴대폰 메뉴·방 목록·맨 아래 '처음으로'
+    var t = doc.getElementById(a.getAttribute('href').slice(1)); if (!t) return;
+    e.preventDefault();
+    if (menuOpen) setMenu(false);
+    jumpTo(t);
+  });
 
   /* 7. 첫 화면 SCROLL 안내: 15초 동안 아무 움직임이 없으면 서서히 나타남 */
   var cue = doc.querySelector('.scroll-cue');
