@@ -173,6 +173,14 @@ body.menu-open .site-header { background-color: var(--bg); color: var(--fg); bor
 .room-index .name { font-size: clamp(1.75rem, 4.4vw, 3.6rem); font-weight: 600; letter-spacing: -.035em; line-height: 1.05; transition: transform .8s var(--ease); }
 .room-index .desc { font-family: var(--serif); font-style: italic; font-size: clamp(.95rem, 1.2vw, 1.1rem); color: var(--muted); }
 .room-index a:hover .name, .room-index a:focus-visible .name { transform: translateX(14px); }
+/* 3D 전시장 입구 */
+.hall-cta { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px 24px; margin-top: clamp(28px, 5vh, 48px); padding: clamp(20px, 3vh, 28px) clamp(20px, 3vw, 32px); border: 1px solid var(--line); text-decoration: none; transition: background-color .6s var(--ease-soft), border-color .6s var(--ease-soft); }
+.hall-cta-k { grid-column: 1; font: 500 .6875rem/1 var(--mono); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+.hall-cta-t { grid-column: 1; font-size: clamp(1.15rem, 2.2vw, 1.75rem); font-weight: 600; letter-spacing: -.02em; transition: transform .8s var(--ease); }
+.hall-cta-arrow { grid-column: 2; grid-row: 1 / span 2; font-size: 1.5rem; transition: transform .8s var(--ease); }
+.hall-cta:hover, .hall-cta:focus-visible { border-color: var(--fg); }
+.hall-cta:hover .hall-cta-t, .hall-cta:focus-visible .hall-cta-t { transform: translateX(10px); }
+.hall-cta:hover .hall-cta-arrow, .hall-cta:focus-visible .hall-cta-arrow { transform: translateX(6px); }
 
 /* ---------- 8. 전시실 · 캡션 ---------- */
 .room { padding-bottom: var(--space-l); }
