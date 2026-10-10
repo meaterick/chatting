@@ -357,7 +357,9 @@
   const obstacles = [];                                     // 걸을 때 피해 가는 것 (소파·칸막이)
   const segs = [];                                          // 자유 이동(WASD)용 충돌 선: 벽·가벽·펜스·소파 둘레 (위에서 본 2D)
   const seg = (ax, az, bx, bz) => segs.push([ax, az, bx, bz]);
+  const rects = [];                                         // 직사각형 물체의 바닥 자리 (소파·벤치·가벽 안에 갇히지 않게)
   function rectSegs(cx, cz, w, d, ry) {                    // 회전된 직사각형 둘레
+    rects.push({ cx, cz, w, d, ry: ry || 0 });
     const c = Math.cos(ry || 0), s = Math.sin(ry || 0);
     const P = [[-w / 2, -d / 2], [w / 2, -d / 2], [w / 2, d / 2], [-w / 2, d / 2]].map(([x, z]) => [cx + x * c + z * s, cz - x * s + z * c]);
     for (let i = 0; i < 4; i++) seg(P[i][0], P[i][1], P[(i + 1) % 4][0], P[(i + 1) % 4][1]);
@@ -523,7 +525,7 @@
     const g = new THREE.Group(); g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g);
     flat(3.0, 1.8, basic({ map: blob, transparent: true, depthWrite: false }), x, 0.004, z, ry);
     const front = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry));
-    const seat = { pos: new THREE.Vector3(x, 1.12, z).addScaledVector(front, 0.05), yaw: Math.atan2(-front.x, -front.z), pitch: -0.04, room: r };   // 앉으면 소파가 바라보는 쪽을 봄
+    const seat = { pos: new THREE.Vector3(x, 1.12, z).addScaledVector(front, 0.05), yaw: Math.atan2(-front.x, -front.z), pitch: -0.04, room: r, stand: new THREE.Vector3(x, 1.6, z).addScaledVector(front, 0.95) };   // stand: 일어나면 설 자리 (소파 앞)   // 앉으면 소파가 바라보는 쪽을 봄
     const hit = new THREE.Mesh(new THREE.BoxGeometry(2.2, 0.85, 0.85), basic({ visible: false })); hit.position.y = 0.42; g.add(hit);   // 누르는 영역
     hit.userData.seat = seat; sofaParts.push(hit); sofaSeats.push(seat); sofaSlots.push(g);
     if (sofaModel) g.add(sofaModel.clone());
@@ -551,7 +553,7 @@
     g.position.set(x, 0, z); g.rotation.y = ry; scene.add(g);
     flat(len + 0.9, 1.3, basic({ map: blob, transparent: true, depthWrite: false, opacity: 0.8 }), x, 0.004, z, ry);
     const front = new THREE.Vector3(Math.sin(ry), 0, Math.cos(ry));
-    const seat = { pos: new THREE.Vector3(x, 1.06, z).addScaledVector(front, -0.05), yaw: Math.atan2(-front.x, -front.z), pitch: 0.02, room: r };
+    const seat = { pos: new THREE.Vector3(x, 1.06, z).addScaledVector(front, -0.05), yaw: Math.atan2(-front.x, -front.z), pitch: 0.02, room: r, stand: new THREE.Vector3(x, 1.6, z).addScaledVector(front, 0.8) };
     g.children.forEach((m) => { m.userData.seat = seat; sofaParts.push(m); });
     const ax = Math.cos(ry), az = -Math.sin(ry);
     [-1, 0, 1].forEach((k) => obstacles.push({ x: x + ax * k * (len / 2 - 0.35), z: z + az * k * (len / 2 - 0.35), r: 0.6 }));
@@ -1202,7 +1204,7 @@
   function sit(seat) {                                      // 소파에 앉기
     exitFree();
     if (tween) { pending = () => sit(seat); return; }
-    seated = true; close = false; scan = null;
+    seated = true; seatedAt = seat; close = false; scan = null;
     const first = frames.findIndex((f) => f.r.i === seat.room); if (first > -1) wantTextures(first + 2);   // 앉은 방의 사진 미리 불러오기
     document.body.classList.remove('at-entrance'); document.body.classList.add('is-seated');
     moveTo(seat);
@@ -1263,7 +1265,23 @@
   const FREE_WALK = !/(^|\.)dostervibes\.kro\.kr$/.test(location.hostname);
   const PLAYER_R = 0.28, WALK = 1.7, RUN = 3.9, GRAV = 9.8, JUMP_V = 3.3;
   const keys = new Set(), vel = new THREE.Vector2();
-  let free = null, lastW = 0, runLatch = false, lastFree = 0, texTick = 0, bob = 0;
+  let free = null, lastW = 0, runLatch = false, lastFree = 0, texTick = 0, bob = 0, seatedAt = null;
+  function stepOut(p) {                                     // 소파·벤치·가벽 안쪽이면 가장 가까운 바깥으로
+    rects.forEach((q) => {
+      const c = Math.cos(q.ry), sn = Math.sin(q.ry), dx = p.x - q.cx, dz = p.z - q.cz;
+      const lx = dx * c - dz * sn, lz = dx * sn + dz * c;   // 물체 기준 좌표
+      const ox = q.w / 2 + PLAYER_R + 0.02 - Math.abs(lx), oz = q.d / 2 + PLAYER_R + 0.02 - Math.abs(lz);
+      if (ox <= 0 || oz <= 0) return;
+      let nx = lx, nz = lz;
+      if (ox < oz) nx = Math.sign(lx || 1) * (q.w / 2 + PLAYER_R + 0.02); else nz = Math.sign(lz || 1) * (q.d / 2 + PLAYER_R + 0.02);
+      p.x = q.cx + nx * c + nz * sn; p.z = q.cz - nx * sn + nz * c;
+    });
+  }
+  function nearestStop(p) {                                 // 자유롭게 걷다가 투어로 돌아올 때: 지금 가장 가까운 작품(또는 가벽)
+    let best = -1, bd = Infinity;
+    for (let s = -1; s < stops.length; s++) { const v = viewForStop(s), d = Math.hypot(v.pos.x - p.x, v.pos.z - p.z); if (d < bd) { bd = d; best = s; } }
+    return best;
+  }
   function nearestRoom(x, z) { let best = rooms[0], bd = Infinity; rooms.forEach((r) => { const d = Math.hypot(x - r.cx, z - r.cz); if (d < bd) { bd = d; best = r; } }); return best; }
   function collide(p) {                                     // 벽·펜스·소파에 닿으면 미끄러지듯 밀려남
     for (let it = 0; it < 3; it++) for (const [ax, az, bx, bz] of segs) {
@@ -1277,8 +1295,11 @@
     if (free) return;
     tween = null; pending = null; scan = null;
     heading = wrapA(heading + yaw); tilt = THREE.MathUtils.clamp(tilt + pitch, -0.9, 0.9); yaw = 0; pitch = 0;
-    if (seated) { seated = false; document.body.classList.remove('is-seated'); }
-    close = false; camPos.y = EYE; vel.set(0, 0);
+    if (seated) {                                           // 앉아 있었으면: 소파 앞으로 일어나서 걷기 시작
+      seated = false; document.body.classList.remove('is-seated');
+      if (seatedAt) { camPos.x = seatedAt.stand.x; camPos.z = seatedAt.stand.z; }
+    }
+    close = false; camPos.y = EYE; vel.set(0, 0); stepOut(camPos);
     free = { y: 0, vy: 0, room: nearestRoom(camPos.x, camPos.z).key };
     collide(camPos);
     document.body.classList.remove('at-entrance');
@@ -1289,6 +1310,7 @@
   function exitFree() {                                     // 안내 투어(→, 사진 클릭)로 돌아갈 때: 지금 서 있는 곳에서 출발
     if (!free) return;
     free = null; keys.clear(); camPos.y = EYE;
+    current = nearestStop(camPos);                          // → / ← 는 '지금 서 있는 곳' 기준으로 다음·이전 작품
     const r = nearestRoom(camPos.x, camPos.z);
     here = { pos: camPos.clone(), room: r.i, door: false };
   }
@@ -1333,13 +1355,14 @@
   }
 
   /* ---------- 입력 ---------- */
-  $('next').addEventListener('click', () => go(current + 1));
-  $('prev').addEventListener('click', () => go(current - 1));
+  function step(d) { exitFree(); go(current + d); }          // 다음·이전 (자유 이동 중이었으면 지금 자리 기준)
+  $('next').addEventListener('click', () => step(1));
+  $('prev').addEventListener('click', () => step(-1));
   $('enter').addEventListener('click', () => go(titleStop(1)));
   addEventListener('keydown', (e) => {
     if (e.target.closest && e.target.closest('a, button') && (e.key === ' ' || e.key === 'Enter')) return;
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); go(current + 1); }
-    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); go(current - 1); }
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); step(1); }
+    else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); step(-1); }
     else if (e.key === 'Escape') { if (close) { close = false; go(current, 1500); } }
     else if (e.key === 'Home') go(-1);
   });
@@ -1348,7 +1371,7 @@
     e.preventDefault();
     const now = performance.now(); if (now < wheelLock) return;
     wheelAcc += e.deltaY + e.deltaX;
-    if (Math.abs(wheelAcc) > 70) { go(current + (wheelAcc > 0 ? 1 : -1)); wheelAcc = 0; wheelLock = now + 1800; }
+    if (Math.abs(wheelAcc) > 70) { step(wheelAcc > 0 ? 1 : -1); wheelAcc = 0; wheelLock = now + 1800; }
   }, { passive: false });
 
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -1388,7 +1411,7 @@
     const h = pick(e.clientX, e.clientY); if (!h) return;
     if (h.exit) return leave();
     if (h.door) return goDoor(h.door);
-    if (h.seat) return seated ? go(current) : sit(h.seat);
+    if (h.seat) return seated ? go(current) : sit(h.seat);           // 일어나면 앉기 전 작품으로 (걷다가 앉았으면 sit()이 가까운 작품으로 맞춰 둠)
     const s = frames[h.photo].stop;
     if (s === current && !seated) { close = !close; go(current, 1500); } else go(s);
   });
@@ -1463,7 +1486,7 @@
     if (o && photoMeshes.indexOf(o) > -1) return go(frames[photoMeshes.indexOf(o)].stop);
     if (o && o.userData.door) return goDoor(o.userData.door);
     if (o && o.userData.exitToSite) return leave();
-    go(current + 1);                                        // 그 밖: 다음 작품으로
+    step(1);                                                // 그 밖: 다음 작품으로
   }
   for (let i = 0; i < 2; i++) {                             // 컨트롤러 레이저 (손·시선 입력에는 안 보임)
     const c = renderer.xr.getController(i);

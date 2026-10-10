@@ -319,8 +319,9 @@
       pk.alt = ''; pk.setAttribute('aria-hidden', 'true'); pk.setAttribute('draggable', 'false'); pk.decoding = 'async';
       viewer.appendChild(pk);
     });
+    var noPeek = window.matchMedia('(max-width: 899px), (pointer: coarse) and (max-height: 520px)');   // style.css와 같은 조건: 휴대폰은 미리보기 없음
     function updatePeeks(list) {
-      var n = list.length; if (n < 2) { peekPrev.removeAttribute('src'); peekNext.removeAttribute('src'); return; }
+      var n = list.length; if (n < 2 || noPeek.matches) { peekPrev.removeAttribute('src'); peekNext.removeAttribute('src'); return; }
       [[peekPrev, list[(current - 1 + n) % n]], [peekNext, list[(current + 1) % n]]].forEach(function (pair) {
         var src = pair[1].currentSrc || pair[1].src;
         if (pair[0].getAttribute('src') === src) return;
@@ -663,6 +664,7 @@
       dragX = (e.touches[0].clientX - touchX) * 0.55;
       vImg.style.transform = 'translateX(' + dragX.toFixed(1) + 'px)';
       vImg.style.opacity = String(1 - Math.min(Math.abs(dragX) / 520, 0.35));
+      if (noPeek.matches) return;
       viewer.classList.add('is-dragging-peek');
       var pk = dragX < 0 ? peekNext : peekPrev, other = dragX < 0 ? peekPrev : peekNext, edge = window.innerWidth < 900 ? 10 : 46;
       pk.style.transform = 'translate(calc(' + (dragX < 0 ? '100% - ' : '-100% + ') + (edge + Math.abs(dragX) * 1.4).toFixed(1) + 'px), -50%)';

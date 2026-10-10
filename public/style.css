@@ -441,12 +441,11 @@ img { -webkit-touch-callout: none; }   /* 휴대폰: 사진 길게 눌러 저장
   .viewer-figure { padding: 64px 12px 72px; }
   .viewer-img { height: calc(100vh - 190px); height: calc(100dvh - 190px); }
   .viewer-nav { top: auto; bottom: 10px; transform: none; width: 56px; height: 56px; }
-  .viewer-peek { height: 26vh; max-width: 40vw; opacity: .3; }
-  .viewer-peek--prev { transform: translate(calc(-100% + 10px), -50%); }
-  .viewer-peek--next { transform: translate(calc(100% - 10px), -50%); }
+  .viewer-peek { display: none; }                 /* 휴대폰: 양옆 사진 미리보기 없이 사진 한 장만 */
 }
 
 /* ---------- 17. 움직임 줄이기 ---------- */
+@media (pointer: coarse) and (max-height: 520px) { .viewer-peek { display: none; } }   /* 가로로 눕힌 휴대폰도 */
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
 @media (prefers-reduced-motion: reduce) {
   .js .pano-pin { height: auto; }
